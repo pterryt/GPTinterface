@@ -13,7 +13,7 @@ find_package(Qt6 COMPONENTS
         Widgets
         REQUIRED)
 
-add_executable(GPTinterface main.cpp gui/mainwindow.cpp gui/mainwindow.h gui/mainwindow.ui gui/workspace.cpp gui/workspace.h gui/widgets/promptInput.cpp gui/widgets/promptInput.h)
+add_executable(GPTinterface src/main.cpp src/gui/MainWindow.cpp src/gui/MainWindow.h src/gui/mainwindow.ui src/gui/Workspace.cpp src/gui/Workspace.h src/gui/widgets/RightToolBar.cpp src/gui/widgets/WSTabWidget.cpp)
 target_link_libraries(GPTinterface
         Qt::Core
         Qt::Gui
