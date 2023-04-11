@@ -20,6 +20,8 @@ public slots:
 
     void newTab();
 
+    void handleSendButtonClicked();
+
 private:
 
     int MAX_TABS = 8;

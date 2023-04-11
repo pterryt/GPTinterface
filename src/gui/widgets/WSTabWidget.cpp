@@ -32,3 +32,13 @@ void WSTabWidget::newTab()
         setCurrentIndex(count() - 2);
     }
 }
+
+void WSTabWidget::handleSendButtonClicked()
+{
+    Workspace *currentWorkspace = qobject_cast<Workspace *>(this->currentWidget
+    ());
+    if(currentWorkspace)
+    {
+       currentWorkspace->handleSendButtonClicked();
+    }
+}

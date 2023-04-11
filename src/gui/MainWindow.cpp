@@ -49,6 +49,9 @@ namespace Ui
 
         //set central widget
         setCentralWidget(mainWidget);
+
+        connect(m_rightToolBar, &RightToolBar::sendButtonClick, m_tabWidget,
+                &WSTabWidget::handleSendButtonClicked);
     }
 
     MainWindow::~MainWindow()
