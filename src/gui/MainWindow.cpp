@@ -1,8 +1,6 @@
 #include "MainWindow.h"
 #include "ui_mainwindow.h"
 #include <QTabBar>
-#include <QPushButton>
-#include <QHBoxLayout>
 #include <QVBoxLayout>
 #include "widgets/RightToolBar.h"
 #include <QScreen>

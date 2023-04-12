@@ -13,13 +13,18 @@ find_package(Qt6 COMPONENTS
         Widgets
         REQUIRED)
 
+find_package(CURL REQUIRED)
+
+include_directories(usr/include/curl)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/include)
+
 add_executable(GPTinterface src/main.cpp src/gui/MainWindow.cpp src/gui/MainWindow.h src/gui/mainwindow.ui
         src/gui/Workspace.cpp src/gui/Workspace.h src/gui/widgets/RightToolBar.cpp
-        src/gui/widgets/WSTabWidget.cpp src/gui/widgets/InputBox.cpp src/gui/widgets/OutputContainer.cpp)
+        src/gui/widgets/WSTabWidget.cpp src/gui/widgets/InputBox.cpp src/gui/widgets/OutputContainer.cpp src/utils/RequestHandler.cpp src/utils/RequestHandler.h)
 
 target_link_libraries(GPTinterface
         Qt::Core
         Qt::Gui
         Qt::Widgets
+        /usr/lib/libcurl.so
         )
-

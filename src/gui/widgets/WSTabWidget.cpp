@@ -26,7 +26,6 @@ void WSTabWidget::newTab()
     {
         QTabBar* tabBar = this->tabBar();
         auto *x = new Workspace;
-        std::cout << count() << std::endl;
         addTab(x, QString::number(count()));
         tabBar->moveTab((count() - 1), (count() - 2));
         setCurrentIndex(count() - 2);
