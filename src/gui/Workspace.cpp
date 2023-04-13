@@ -8,6 +8,7 @@
 
 Workspace::Workspace(QWidget *parent) : QWidget(parent)
 {
+    requestHandler = new RequestHandler(this);
     m_processingReponse = false;
     auto *mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
@@ -22,37 +23,32 @@ Workspace::Workspace(QWidget *parent) : QWidget(parent)
     mainLayout->addWidget(m_spacer);
     mainLayout->addWidget(m_inputBox);
 
-    connect(&apiResponseWatcher, &QFutureWatcher<std::string>::finished,
-            this, &Workspace::handleResponse);
+    connect(requestHandler, &RequestHandler::newDataReceived, this,
+            &Workspace::onNewDataReceived);
+
 }
-
-void Workspace::handleSendButtonClicked()
+void Workspace::onNewDataReceived(const QString &data)
 {
-    if (!m_processingReponse)
+    if (m_currentItem)
     {
-        QString inputString = m_inputBox->toPlainText();
-        auto* input = new QListWidgetItem(inputString);
-        formatUserInput(input);
-        m_outputBox->addItem(input);
-        m_inputBox->setText("");
-
-        QFuture<std::string> apiResponseFuture = QtConcurrent::run
-                (RequestHandler::qPTrequest, inputString.toStdString());
-
-        apiResponseWatcher.setFuture(apiResponseFuture);
-
-        m_processingReponse = true;
+        m_currentItem->setText(m_currentItem->text() + data);
     }
 }
-
-void Workspace::handleResponse()
+void Workspace::handleSendButtonClicked()
 {
-    std::string response = apiResponseWatcher.future().result();
-    m_processingReponse = false;
-    auto* input = new QListWidgetItem(QString::fromStdString(response));
-    formatResponse(input);
+    QString inputString = m_inputBox->toPlainText();
+    auto* input = new QListWidgetItem(inputString);
+    formatUserInput(input);
     m_outputBox->addItem(input);
+    m_inputBox->setText("");
+
+    m_currentItem = new QListWidgetItem("GPT Response: ");
+    formatResponse(m_currentItem);
+    m_outputBox->addItem(m_currentItem);
+
+    requestHandler->startStreaming(inputString.toStdString());
 }
+
 
 void Workspace::formatUserInput(QListWidgetItem *item)
 {

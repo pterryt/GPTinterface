@@ -9,6 +9,7 @@
 #include <QFutureWatcher>
 #include "widgets/OutputContainer.h"
 #include "widgets/InputBox.h"
+#include "../utils/RequestHandler.h"
 
 class Workspace : public QWidget
 {
@@ -22,6 +23,7 @@ public slots:
 
     void handleSendButtonClicked();
 
+
 private:
 
     bool m_processingReponse;
@@ -30,13 +32,17 @@ private:
     QPointer<InputBox> m_inputBox;
     QPointer<QWidget> m_spacer;
     QPointer<QTabWidget> m_tBar;
+    QListWidgetItem* m_currentItem;
+    QPointer<RequestHandler> requestHandler;
     QFont m_font{"JetBrains Mono", 16};
 
 
     void formatUserInput(QListWidgetItem* item);
     void formatResponse(QListWidgetItem* item);
 
-    void handleResponse();
+private slots:
+    void onNewDataReceived(const QString& data);
+
 };
 
 

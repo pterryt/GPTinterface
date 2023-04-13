@@ -11,6 +11,7 @@ find_package(Qt6 COMPONENTS
         Core
         Gui
         Widgets
+        Network
         REQUIRED)
 
 find_package(CURL REQUIRED)
@@ -26,5 +27,6 @@ target_link_libraries(GPTinterface
         Qt::Core
         Qt::Gui
         Qt::Widgets
+        Qt::Network
         /usr/lib/libcurl.so
         )

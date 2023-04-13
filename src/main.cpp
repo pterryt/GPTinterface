@@ -1,6 +1,7 @@
 #include <QApplication>
 
 #include "gui/MainWindow.h"
+#include "utils/RequestHandler.h"
 #include <iostream>
 
 int main(int argc, char *argv[])
@@ -28,14 +29,6 @@ int main(int argc, char *argv[])
     QApplication::setPalette(darkPalette);
     App.setStyleSheet("QEditLine, QTextEdit { font-size: 22px; }");
 
-
-    //show window
-//    main_window->show();
     mainWindow.show();
-//    int ret = a.exec();
-
-//    delete main_window;
-
-//    return ret;
     return App.exec();
 }
