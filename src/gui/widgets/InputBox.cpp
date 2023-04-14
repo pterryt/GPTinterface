@@ -1,4 +1,5 @@
 #include "InputBox.h"
+#include <QKeyEvent>
 
 InputBox::InputBox(QWidget *parent)
         : QTextEdit(parent)
@@ -47,4 +48,15 @@ void InputBox::adjustHeight()
             frameWidth;
 
     setFixedHeight(newHeight);
+}
+
+void InputBox::keyPressEvent(QKeyEvent *e) {
+    if (e->key() == Qt::Key_Return)
+    {
+        emit enterKeyPressed();
+    }
+    else
+    {
+        QTextEdit::keyPressEvent(e);
+    }
 }

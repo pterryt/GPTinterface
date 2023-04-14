@@ -16,7 +16,7 @@ Workspace::Workspace(QWidget *parent) : QWidget(parent)
     mainLayout->setSpacing(10);
     m_scrollArea = new customScrollArea;
     m_spacer = new QWidget;
-    m_inputBox = new InputBox;
+    m_inputBox = new InputBox(this);
     m_inputBox->setFont(m_font);
 
 
@@ -24,12 +24,14 @@ Workspace::Workspace(QWidget *parent) : QWidget(parent)
     mainLayout->addWidget(m_spacer);
     mainLayout->addWidget(m_inputBox);
 
-    QShortcut *shiftEnter = new QShortcut(QKeySequence(Qt::ShiftModifier +
-            Qt::Key_Return), this);
-    shiftEnter->setContext(Qt::WidgetWithChildrenShortcut);
+//    auto *sendEnter = new QShortcut(QKeySequence(Qt::Key_Return), this);
+//    sendEnter->setContext(Qt::WidgetShortcut);
+//
+//    connect(sendEnter, &QShortcut::activated, this,
+//            &Workspace::handleSendButtonClicked);
 
-    connect(shiftEnter, &QShortcut::activatedAmbiguously, this,
-            &Workspace::handleSendButtonClicked);
+
+    connect(m_inputBox, &InputBox::enterKeyPressed, this, &Workspace::handleSendButtonClicked);
 
     connect(requestHandler, &RequestHandler::newDataReceived, this,
             &Workspace::onNewDataReceived);
@@ -61,12 +63,12 @@ void Workspace::handleSendButtonClicked()
     {
         QString inputString = m_inputBox->toPlainText();
         auto *input = new customTextEdit(inputString);
-        formatUserInput(input);
+//        formatUserInput(input);
         m_scrollArea->addCustomWidget(input);
         m_inputBox->setText("");
 
         m_currentTextEdit = new customTextEdit("", this);
-        formatResponse(m_currentTextEdit);
+//        formatResponse(m_currentTextEdit);
         m_scrollArea->addCustomWidget(m_currentTextEdit);
         m_currentTextEdit->updateSizeHint();
 
@@ -76,15 +78,15 @@ void Workspace::handleSendButtonClicked()
 }
 
 
-void Workspace::formatUserInput(customTextEdit *item)
-{
-    item->setFont(m_font);
-    item->updateSizeHint();
-}
-
-void Workspace::formatResponse(customTextEdit *item)
-{
-    item->setFont(m_font);
-}
+//void Workspace::formatUserInput(customTextEdit *item)
+//{
+//    item->setFont(m_font);
+//    item->updateSizeHint();
+//}
+//
+//void Workspace::formatResponse(customTextEdit *item)
+//{
+//    item->setFont(m_font);
+//}
 
 

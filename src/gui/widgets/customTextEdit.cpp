@@ -1,4 +1,7 @@
 #include "customTextEdit.h"
+#include <QShortcut>
+#include "RightToolBar.h"
+
 
 customTextEdit::customTextEdit(const QString &text, QWidget *parent)
         : QTextEdit(text, parent)
@@ -7,6 +10,8 @@ customTextEdit::customTextEdit(const QString &text, QWidget *parent)
     setVerticalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     setReadOnly(true);
+    setFont(QFont("JetBrains Mono"));
+
 }
 
 

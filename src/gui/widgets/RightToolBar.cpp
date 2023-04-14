@@ -22,9 +22,6 @@ RightToolBar::RightToolBar(QWidget *parent)
 
     m_layout->setContentsMargins(0,0,0,1);
 
-    QShortcut *shortcut = new QShortcut(QKeySequence(Qt::ShiftModifier +
-            Qt::Key_Return), this);
-    connect(shortcut, &QShortcut::activated, [&](){m_sendButton->click();});
     connect(m_sendButton, &QPushButton::clicked, this,
             &RightToolBar::handleSendButtonClicked);
 }

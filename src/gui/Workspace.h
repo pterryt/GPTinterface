@@ -27,7 +27,7 @@ public slots:
     void handleSendButtonClicked();
 
 signals:
-    void shiftEnter();
+    void sendByKeybind();
 
 
 private:
