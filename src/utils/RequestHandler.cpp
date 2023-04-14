@@ -75,6 +75,7 @@ void RequestHandler::onFinished() {
     QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
     if (reply) {
         qDebug() << "Request finished";
+        emit responseFinshed();
         reply->deleteLater();
     }
 }

@@ -1,9 +1,10 @@
 #include "Workspace.h"
 #include <QVBoxLayout>
 #include <iostream>
-#include "../utils/RequestHandler.h"
 #include <QListWidget>
 #include <QtConcurrent/QtConcurrent>
+#include <QShortcut>
+
 
 
 Workspace::Workspace(QWidget *parent) : QWidget(parent)
@@ -13,55 +14,77 @@ Workspace::Workspace(QWidget *parent) : QWidget(parent)
     auto *mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
     mainLayout->setSpacing(10);
-    m_outputBox = new OutputContainer;
+    m_scrollArea = new customScrollArea;
     m_spacer = new QWidget;
     m_inputBox = new InputBox;
     m_inputBox->setFont(m_font);
 
 
-    mainLayout->addWidget(m_outputBox);
+    mainLayout->addWidget(m_scrollArea);
     mainLayout->addWidget(m_spacer);
     mainLayout->addWidget(m_inputBox);
+
+    QShortcut *shiftEnter = new QShortcut(QKeySequence(Qt::ShiftModifier +
+            Qt::Key_Return), this);
+    shiftEnter->setContext(Qt::WidgetWithChildrenShortcut);
+
+    connect(shiftEnter, &QShortcut::activatedAmbiguously, this,
+            &Workspace::handleSendButtonClicked);
 
     connect(requestHandler, &RequestHandler::newDataReceived, this,
             &Workspace::onNewDataReceived);
 
+    connect(requestHandler, &RequestHandler::responseFinshed, this, [this]()
+    -> void {m_processingReponse = false;});
+
 }
+
+
+
+
 void Workspace::onNewDataReceived(const QString &data)
 {
-    if (m_currentItem)
+    if (m_currentTextEdit)
     {
-        m_currentItem->setText(m_currentItem->text() + data);
+            qDebug() << "Appending text to CustomTextItem";
+            m_currentTextEdit->appendText(data);
+            m_currentTextEdit->updateSizeHint();
     }
 }
+
+
+
+
 void Workspace::handleSendButtonClicked()
 {
-    QString inputString = m_inputBox->toPlainText();
-    auto* input = new QListWidgetItem(inputString);
-    formatUserInput(input);
-    m_outputBox->addItem(input);
-    m_inputBox->setText("");
+    if (!m_processingReponse)
+    {
+        QString inputString = m_inputBox->toPlainText();
+        auto *input = new customTextEdit(inputString);
+        formatUserInput(input);
+        m_scrollArea->addCustomWidget(input);
+        m_inputBox->setText("");
 
-    m_currentItem = new QListWidgetItem("GPT Response: ");
-    formatResponse(m_currentItem);
-    m_outputBox->addItem(m_currentItem);
+        m_currentTextEdit = new customTextEdit("", this);
+        formatResponse(m_currentTextEdit);
+        m_scrollArea->addCustomWidget(m_currentTextEdit);
+        m_currentTextEdit->updateSizeHint();
 
-    requestHandler->startStreaming(inputString.toStdString());
+        m_processingReponse = true;
+        requestHandler->startStreaming(inputString.toStdString());
+    }
 }
 
 
-void Workspace::formatUserInput(QListWidgetItem *item)
+void Workspace::formatUserInput(customTextEdit *item)
 {
     item->setFont(m_font);
-    QString userPrefix = "You said: ";
-    item->setText(userPrefix + item->text());
+    item->updateSizeHint();
 }
 
-void Workspace::formatResponse(QListWidgetItem *item)
+void Workspace::formatResponse(customTextEdit *item)
 {
     item->setFont(m_font);
-    QString userPrefix = "GPT Reponse: ";
-    item->setText(userPrefix + item->text());
 }
 
 

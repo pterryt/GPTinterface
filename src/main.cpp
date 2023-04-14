@@ -1,14 +1,11 @@
 #include <QApplication>
 
 #include "gui/MainWindow.h"
-#include "utils/RequestHandler.h"
-#include <iostream>
 
 int main(int argc, char *argv[])
 {
     QApplication App(argc, argv);
     Ui::MainWindow mainWindow;
-//    Ui::MainWindow *main_window = new Ui::MainWindow;
 
     // dark theme
     QPalette darkPalette;
@@ -25,7 +22,6 @@ int main(int argc, char *argv[])
     darkPalette.setColor(QPalette::Link, QColor(42, 130, 218));
     darkPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
     darkPalette.setColor(QPalette::HighlightedText, Qt::black);
-//    main_window->setPalette(darkPalette);
     QApplication::setPalette(darkPalette);
     App.setStyleSheet("QEditLine, QTextEdit { font-size: 22px; }");
 

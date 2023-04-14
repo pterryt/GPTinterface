@@ -17,6 +17,8 @@ public:
 signals:
     void newDataReceived(const QString& data);
 
+    void responseFinshed();
+
 public slots:
     void onReadyRead();
     void onFinished();

@@ -50,6 +50,7 @@ namespace Ui
 
         connect(m_rightToolBar, &RightToolBar::sendButtonClick, m_tabWidget,
                 &WSTabWidget::handleSendButtonClicked);
+
     }
 
     MainWindow::~MainWindow()

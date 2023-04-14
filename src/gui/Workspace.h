@@ -7,6 +7,9 @@
 #include <QLineEdit>
 #include <QTabWidget>
 #include <QFutureWatcher>
+
+#include "widgets/customTextEdit.h"
+#include "widgets/customScrollArea.h"
 #include "widgets/OutputContainer.h"
 #include "widgets/InputBox.h"
 #include "../utils/RequestHandler.h"
@@ -23,22 +26,26 @@ public slots:
 
     void handleSendButtonClicked();
 
+signals:
+    void shiftEnter();
+
 
 private:
 
     bool m_processingReponse;
     QFutureWatcher<std::string> apiResponseWatcher;
-    QPointer<OutputContainer> m_outputBox;
+    QPointer<customScrollArea> m_scrollArea;
     QPointer<InputBox> m_inputBox;
     QPointer<QWidget> m_spacer;
     QPointer<QTabWidget> m_tBar;
-    QListWidgetItem* m_currentItem;
+    QPointer<customTextEdit> m_currentTextEdit;
     QPointer<RequestHandler> requestHandler;
     QFont m_font{"JetBrains Mono", 16};
 
 
-    void formatUserInput(QListWidgetItem* item);
-    void formatResponse(QListWidgetItem* item);
+    void formatUserInput(customTextEdit* item);
+    void formatResponse(customTextEdit* item);
+
 
 private slots:
     void onNewDataReceived(const QString& data);
