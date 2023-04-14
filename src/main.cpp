@@ -1,6 +1,14 @@
 #include <QApplication>
 
 #include "gui/MainWindow.h"
+#include "devtools/ToolTipEventFilter.h"
+
+void installFiltersRecursively(QWidget *widget, ToolTipEventFilter *filter) {
+    widget->installEventFilter(filter);
+    for (auto child : widget->findChildren<QWidget *>()) {
+        installFiltersRecursively(child, filter);
+    }
+}
 
 int main(int argc, char *argv[])
 {
@@ -23,7 +31,14 @@ int main(int argc, char *argv[])
     darkPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
     darkPalette.setColor(QPalette::HighlightedText, Qt::black);
     QApplication::setPalette(darkPalette);
-    App.setStyleSheet("QEditLine, QTextEdit { font-size: 22px; }");
+//        App.setStyleSheet("QEditLine, QTextEdit, customTextEdit { font-size: "
+//                          "22px; }");
+    App.setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; "
+                      "border: 1px solid black; font-size: 22px}");
+
+    /* Add toolips to all objects recursively */
+    ToolTipEventFilter *eventFilter = new ToolTipEventFilter(&mainWindow);
+    installFiltersRecursively(&mainWindow, eventFilter);
 
     mainWindow.show();
     return App.exec();

@@ -13,9 +13,8 @@ Workspace::Workspace(QWidget *parent) : QWidget(parent)
     m_processingReponse = false;
     auto *mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
-    mainLayout->setSpacing(10);
-    m_scrollArea = new customScrollArea;
-    m_spacer = new QWidget;
+    m_scrollArea = new customScrollArea(this);
+    m_spacer = new QWidget(this);
     m_inputBox = new InputBox(this);
     m_inputBox->setFont(m_font);
 
@@ -24,11 +23,6 @@ Workspace::Workspace(QWidget *parent) : QWidget(parent)
     mainLayout->addWidget(m_spacer);
     mainLayout->addWidget(m_inputBox);
 
-//    auto *sendEnter = new QShortcut(QKeySequence(Qt::Key_Return), this);
-//    sendEnter->setContext(Qt::WidgetShortcut);
-//
-//    connect(sendEnter, &QShortcut::activated, this,
-//            &Workspace::handleSendButtonClicked);
 
 
     connect(m_inputBox, &InputBox::enterKeyPressed, this, &Workspace::handleSendButtonClicked);
@@ -43,7 +37,10 @@ Workspace::Workspace(QWidget *parent) : QWidget(parent)
 
 
 
-
+/**
+ * This function takes data from the SSE and appends it to the current
+ * customtextEdit and updates its sizeHint
+ * */
 void Workspace::onNewDataReceived(const QString &data)
 {
     if (m_currentTextEdit)
@@ -62,13 +59,14 @@ void Workspace::handleSendButtonClicked()
     if (!m_processingReponse)
     {
         QString inputString = m_inputBox->toPlainText();
+
         auto *input = new customTextEdit(inputString);
-//        formatUserInput(input);
+        input->setTextBackgroundColor("White");
         m_scrollArea->addCustomWidget(input);
+
         m_inputBox->setText("");
 
-        m_currentTextEdit = new customTextEdit("", this);
-//        formatResponse(m_currentTextEdit);
+        m_currentTextEdit = new customTextEdit("");
         m_scrollArea->addCustomWidget(m_currentTextEdit);
         m_currentTextEdit->updateSizeHint();
 
@@ -78,15 +76,5 @@ void Workspace::handleSendButtonClicked()
 }
 
 
-//void Workspace::formatUserInput(customTextEdit *item)
-//{
-//    item->setFont(m_font);
-//    item->updateSizeHint();
-//}
-//
-//void Workspace::formatResponse(customTextEdit *item)
-//{
-//    item->setFont(m_font);
-//}
 
 

@@ -9,8 +9,13 @@ customTextEdit::customTextEdit(const QString &text, QWidget *parent)
     setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    setLineWrapMode(QTextEdit::NoWrap);
     setReadOnly(true);
-    setFont(QFont("JetBrains Mono"));
+
+    QFont font = QFont("JetBrains Mono");
+    font.setPointSize(22);
+    setFont(font);
+    updateSizeHint();
 
 }
 
@@ -22,10 +27,14 @@ void customTextEdit::appendText(const QString &text)
 
 void customTextEdit::updateSizeHint()
 {
+    document()->adjustSize();
+
     int contentsMarginsTop = contentsMargins().top();
     int contentsMarginsBottom = contentsMargins().bottom();
+
     int height = document()->size().height() + contentsMarginsBottom +
-            contentsMarginsBottom;
+            contentsMarginsTop;
+
     setMinimumHeight(height);
     setMaximumHeight(height);
     updateGeometry();

@@ -10,7 +10,6 @@
 
 #include "widgets/customTextEdit.h"
 #include "widgets/customScrollArea.h"
-#include "widgets/OutputContainer.h"
 #include "widgets/InputBox.h"
 #include "../utils/RequestHandler.h"
 

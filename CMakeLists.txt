@@ -21,9 +21,9 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/include)
 
 add_executable(GPTinterface src/main.cpp src/gui/MainWindow.cpp src/gui/MainWindow.h src/gui/mainwindow.ui
         src/gui/Workspace.cpp src/gui/Workspace.h src/gui/widgets/RightToolBar.cpp
-        src/gui/widgets/WSTabWidget.cpp src/gui/widgets/InputBox.cpp src/gui/widgets/OutputContainer.cpp
+        src/gui/widgets/WSTabWidget.cpp src/gui/widgets/InputBox.cpp
         src/utils/RequestHandler.cpp src/utils/RequestHandler.h
-        src/gui/widgets/customTextEdit.cpp src/gui/widgets/customScrollArea.cpp)
+        src/gui/widgets/customTextEdit.cpp src/gui/widgets/customScrollArea.cpp src/devtools/ToolTipEventFilter.cpp)
 
 target_link_libraries(GPTinterface
         Qt::Core

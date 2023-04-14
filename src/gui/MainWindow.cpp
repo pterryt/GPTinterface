@@ -6,6 +6,9 @@
 #include <QScreen>
 #include <iostream>
 
+
+
+
 namespace Ui
 {
     MainWindow::MainWindow(QWidget *parent) :
