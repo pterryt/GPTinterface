@@ -10,8 +10,18 @@
 
     }
 
+    void RequestHandler::addMessage(const QString &role, const QString &content)
+    {
+        QJsonObject message;
+        message["role"] = role;
+        message["content"] = content;
+        m_messages.append(message);
+    }
+
     void RequestHandler::startStreaming(const std::string& input)
     {
+        addMessage("user", QString::fromStdString(input));
+
         QUrl url("https://api.openai.com/v1/chat/completions");
         QNetworkRequest request(url);
         QByteArray openaiApiKey = qgetenv("OPENAI_API_KEY");
@@ -23,10 +33,7 @@
         // Create a JSON object for the request body
         QJsonObject requestBody;
         requestBody["model"] = "gpt-3.5-turbo";
-        QVariantMap message;
-        message["role"] = "user";
-        message["content"] = QString::fromStdString(input);
-        requestBody["messages"] = QJsonArray::fromVariantList({QVariant(message)});
+        requestBody["messages"] = m_messages;
         requestBody["max_tokens"] = 500;
         requestBody["temperature"] = 0;
         requestBody["stream"] = true;
@@ -63,6 +70,7 @@
                         QString responseText = choices[0].toObject()["delta"]
                                 .toObject()["content"].toString();
                         qDebug() << "Received data: " << responseText;
+                        m_fullResponse += responseText;
                         // Process the data as needed
                         emit RequestHandler::newDataReceived(responseText);
                     }
@@ -75,6 +83,8 @@ void RequestHandler::onFinished() {
     QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
     if (reply) {
         qDebug() << "Request finished";
+        addMessage("assistant", m_fullResponse);
+        m_fullResponse = "";
         emit responseFinshed();
         reply->deleteLater();
     }

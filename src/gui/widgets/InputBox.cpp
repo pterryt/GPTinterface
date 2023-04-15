@@ -14,11 +14,13 @@ InputBox::InputBox(QWidget *parent)
     connect(this, &QTextEdit::textChanged, this, &InputBox::adjustHeight);
 }
 
+
 void InputBox::resizeEvent(QResizeEvent *event)
 {
     adjustHeight();
     QTextEdit::resizeEvent(event);
 }
+
 
 void InputBox::adjustHeight()
 {
@@ -49,6 +51,7 @@ void InputBox::adjustHeight()
 
     setFixedHeight(newHeight);
 }
+
 
 void InputBox::keyPressEvent(QKeyEvent *e) {
     if (e->key() == Qt::Key_Return)

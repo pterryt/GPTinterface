@@ -4,6 +4,7 @@
 #include <curl/curl.h>
 #include "openai.hpp"
 #include <QObject>
+#include <QJsonArray>
 #include <QtNetwork/QNetworkAccessManager>
 
 class RequestHandler : public QObject
@@ -14,6 +15,8 @@ public:
     explicit RequestHandler(QObject* parent = nullptr);
     void startStreaming(const std::string& input);
 
+    void addMessage(const QString &role, const QString& content);
+
 signals:
     void newDataReceived(const QString& data);
 
@@ -23,8 +26,11 @@ public slots:
     void onReadyRead();
     void onFinished();
 
+
 private:
     QNetworkAccessManager* networkManager;
+    QJsonArray m_messages;
+    QString m_fullResponse;
 };
 
 

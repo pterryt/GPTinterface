@@ -1,12 +1,12 @@
 #include "MainWindow.h"
 #include "ui_mainwindow.h"
-#include <QTabBar>
-#include <QVBoxLayout>
-#include "widgets/RightToolBar.h"
-#include <QScreen>
+
 #include <iostream>
 
-
+#include <QTabBar>
+#include <QVBoxLayout>
+#include <QScreen>
+#include "widgets/RightToolBar.h"
 
 
 namespace Ui
@@ -15,7 +15,6 @@ namespace Ui
             QMainWindow(parent), ui(new Ui::mainwindow)
     {
         ui->setupUi(this);
-
 
         // create the main vertical widget
         auto *totalWidget = new QWidget(this);
