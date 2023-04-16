@@ -1,4 +1,6 @@
+#define QT_NO_KEYWORDS
 #include <QApplication>
+
 
 #include "gui/MainWindow.h"
 #include "devtools/ToolTipEventFilter.h"

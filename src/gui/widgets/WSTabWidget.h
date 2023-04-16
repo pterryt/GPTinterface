@@ -1,8 +1,8 @@
 #ifndef GPTINTERFACE_WSTABWIDGET_H
 #define GPTINTERFACE_WSTABWIDGET_H
-
-#include <QTabWidget>
 #include <iostream>
+#define QT_NO_KEYWORDS
+#include <QTabWidget>
 #include <QTabBar>
 #include "../Workspace.h"
 
@@ -14,7 +14,7 @@ public:
 
     explicit WSTabWidget(QWidget *parent = nullptr);
 
-public slots:
+public Q_SLOTS:
 
     void handleTabBarClicked(int index);
 

@@ -1,26 +1,29 @@
+#include "RequestHandler.h"
 #include <QUrl>
 #include <QtNetwork/QtNetwork>
 #include <QtNetwork/QNetworkAccessManager>
-#include "RequestHandler.h"
 
 
     RequestHandler::RequestHandler(QObject* parent) : QObject(parent),
     networkManager(new QNetworkAccessManager(this))
     {
-
+        m_encoder = new TikTokenEncoder(this);
     }
 
     void RequestHandler::addMessage(const QString &role, const QString &content)
     {
-        QJsonObject message;
-        message["role"] = role;
-        message["content"] = content;
-        m_messages.append(message);
+        Message message;
+        message.size = m_encoder->encode(content.toStdString());
+        message.msg["role"] = role;
+        message.msg["content"] = content;
+        contextContainer.currentContext.push_back(message);
+        contextContainer.size += message.size;
+        m_messages.append(message.msg);
     }
 
-    void RequestHandler::startStreaming(const std::string& input)
+    void RequestHandler::startStreaming(const QString& input)
     {
-        addMessage("user", QString::fromStdString(input));
+        addMessage("user", input);
 
         QUrl url("https://api.openai.com/v1/chat/completions");
         QNetworkRequest request(url);
@@ -72,7 +75,7 @@
                         qDebug() << "Received data: " << responseText;
                         m_fullResponse += responseText;
                         // Process the data as needed
-                        emit RequestHandler::newDataReceived(responseText);
+                        Q_EMIT RequestHandler::newDataReceived(responseText);
                     }
                 }
             }
@@ -85,7 +88,7 @@ void RequestHandler::onFinished() {
         qDebug() << "Request finished";
         addMessage("assistant", m_fullResponse);
         m_fullResponse = "";
-        emit responseFinshed();
+        Q_EMIT responseFinshed();
         reply->deleteLater();
     }
 }

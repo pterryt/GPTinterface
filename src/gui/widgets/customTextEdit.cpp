@@ -9,7 +9,7 @@ customTextEdit::customTextEdit(const QString &text, QWidget *parent)
     setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    setLineWrapMode(QTextEdit::NoWrap);
+//    setLineWrapMode(QTextEdit::NoWrap);
     setReadOnly(true);
 
     QFont font = QFont("JetBrains Mono");

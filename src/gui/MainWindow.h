@@ -1,14 +1,15 @@
 #ifndef GPTINTERFACE_MAINWINDOW_H
 #define GPTINTERFACE_MAINWINDOW_H
-
+#include <iostream>
+#define QT_NO_KEYWORDS
 #include <QMainWindow>
 #include <QTabWidget>
 #include <QVBoxLayout>
 #include <QVariant>
 #include <QTabBar>
-#include <iostream>
-#include "widgets/RightToolBar.h"
+
 #include "Workspace.h"
+#include "widgets/RightToolBar.h"
 #include "widgets/WSTabWidget.h"
 
 namespace Ui
@@ -29,7 +30,7 @@ namespace Ui
 
         ~MainWindow() override;
 
-    public slots:
+    public Q_SLOTS:
 
     protected:
 

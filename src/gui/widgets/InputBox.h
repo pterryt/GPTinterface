@@ -1,6 +1,7 @@
 #ifndef GPTINTERFACE_INPUTBOX_H
 #define GPTINTERFACE_INPUTBOX_H
 
+#define QT_NO_KEYWORDS
 #include <QTextEdit>
 
 class InputBox : public QTextEdit
@@ -14,7 +15,7 @@ protected:
     void resizeEvent(QResizeEvent* event) override;
     void keyPressEvent(QKeyEvent *event) override;
 
-signals:
+Q_SIGNALS:
     void enterKeyPressed();
 
 private:

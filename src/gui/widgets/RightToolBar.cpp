@@ -1,5 +1,4 @@
 #include "RightToolBar.h"
-#include <QIcon>
 #include <QShortcut>
 
 RightToolBar::RightToolBar(QWidget *parent)
@@ -9,7 +8,6 @@ RightToolBar::RightToolBar(QWidget *parent)
 
     m_layout->setSpacing(5);
     m_layout->addStretch();
-
 
     m_optionsButton = new QPushButton(this);
     m_layout->addWidget(m_optionsButton);
@@ -29,5 +27,5 @@ RightToolBar::RightToolBar(QWidget *parent)
 
 void RightToolBar::handleSendButtonClicked()
 {
-    emit sendButtonClick();
+    Q_EMIT sendButtonClick();
 }

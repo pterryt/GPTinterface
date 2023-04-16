@@ -1,6 +1,8 @@
 #ifndef GPTINTERFACE_WORKSPACE_H
 #define GPTINTERFACE_WORKSPACE_H
 
+#include "../utils/TikTokenEncoder.h"
+#define QT_NO_KEYWORDS
 #include <QWidget>
 #include <QPointer>
 #include <QTextEdit>
@@ -21,13 +23,12 @@ public:
 
     explicit Workspace(QWidget *parent = nullptr);
 
-public slots:
+public Q_SLOTS:
 
     void handleSendButtonClicked();
 
-signals:
+Q_SIGNALS:
     void sendByKeybind();
-
 
 private:
 
@@ -46,7 +47,7 @@ private:
     void formatResponse(customTextEdit* item);
 
 
-private slots:
+private Q_SLOTS:
     void onNewDataReceived(const QString& data);
 
 };

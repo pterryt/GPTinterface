@@ -56,7 +56,7 @@ void InputBox::adjustHeight()
 void InputBox::keyPressEvent(QKeyEvent *e) {
     if (e->key() == Qt::Key_Return)
     {
-        emit enterKeyPressed();
+        Q_EMIT enterKeyPressed();
     }
     else
     {

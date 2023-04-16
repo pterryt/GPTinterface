@@ -5,8 +5,6 @@
 #include <QtConcurrent/QtConcurrent>
 #include <QShortcut>
 
-
-
 Workspace::Workspace(QWidget *parent) : QWidget(parent)
 {
     requestHandler = new RequestHandler(this);
@@ -59,7 +57,6 @@ void Workspace::handleSendButtonClicked()
     if (!m_processingReponse)
     {
         QString inputString = m_inputBox->toPlainText();
-
         auto *input = new customTextEdit(inputString);
         input->setTextBackgroundColor("White");
         m_scrollArea->addCustomWidget(input);
@@ -71,7 +68,7 @@ void Workspace::handleSendButtonClicked()
         m_currentTextEdit->updateSizeHint();
 
         m_processingReponse = true;
-        requestHandler->startStreaming(inputString.toStdString());
+        requestHandler->startStreaming(inputString);
     }
 }
 

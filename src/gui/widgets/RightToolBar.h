@@ -1,6 +1,7 @@
 #ifndef GPTINTERFACE_RIGHTTOOLBAR_H
 #define GPTINTERFACE_RIGHTTOOLBAR_H
 
+#define QT_NO_KEYWORDS
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QPushButton>
@@ -13,7 +14,7 @@ public:
 
     explicit RightToolBar(QWidget *parent = nullptr);
 
-signals:
+Q_SIGNALS:
 
     void sendButtonClick();
 
@@ -23,7 +24,7 @@ private:
     QPushButton *m_micButton;
     QPushButton *m_optionsButton;
 
-private slots:
+private Q_SLOTS:
 
     void handleSendButtonClicked();
 
