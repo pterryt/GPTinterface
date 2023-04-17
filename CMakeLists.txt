@@ -21,12 +21,19 @@ include_directories(usr/include/curl)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/include)
 include_directories(${Python3_INCLUDE_DIRS})
 
-add_executable(GPTinterface src/main.cpp src/gui/MainWindow.cpp src/gui/MainWindow.h src/gui/mainwindow.ui
-        src/gui/Workspace.cpp src/gui/Workspace.h src/gui/widgets/RightToolBar.cpp
-        src/gui/widgets/WSTabWidget.cpp src/gui/widgets/InputBox.cpp
-        src/utils/RequestHandler.cpp src/utils/RequestHandler.h
-        src/gui/widgets/customTextEdit.cpp src/gui/widgets/customScrollArea.cpp src/devtools/ToolTipEventFilter.cpp
-        src/utils/TikTokenEncoder.cpp)
+add_executable(GPTinterface
+        src/main.cpp
+        src/gui/MainWindow.cpp
+        src/gui/Workspace.cpp
+        src/gui/widgets/RightToolBar.cpp
+        src/gui/widgets/WSTabWidget.cpp
+        src/gui/widgets/InputBox.cpp
+        src/utils/RequestHandler.cpp
+        src/gui/widgets/customTextEdit.cpp
+        src/gui/widgets/customScrollArea.cpp
+        src/devtools/ToolTipEventFilter.cpp
+        src/utils/TikTokenEncoder.cpp
+        src/gui/widgets/BottomToolBar.cpp)
 
 target_link_libraries(GPTinterface
         Qt::Core

@@ -33,8 +33,6 @@ Workspace::Workspace(QWidget *parent) : QWidget(parent)
 
 }
 
-
-
 /**
  * This function takes data from the SSE and appends it to the current
  * customtextEdit and updates its sizeHint
@@ -43,14 +41,11 @@ void Workspace::onNewDataReceived(const QString &data)
 {
     if (m_currentTextEdit)
     {
-            qDebug() << "Appending text to CustomTextItem";
+//            qDebug() << "Appending text to CustomTextItem";
             m_currentTextEdit->appendText(data);
             m_currentTextEdit->updateSizeHint();
     }
 }
-
-
-
 
 void Workspace::handleSendButtonClicked()
 {

@@ -63,7 +63,7 @@
                 if (line.startsWith("data:")) {
                     QString eventData = line.mid(5).trimmed();
                     if (eventData == "[DONE]") {
-                        qDebug() << "Stream terminated";
+//                        qDebug() << "Stream terminated";
                         reply->abort();
                     } else {
                         QJsonDocument jsonDoc = QJsonDocument::fromJson
@@ -72,7 +72,7 @@
                         QJsonArray choices = jsonObject["choices"].toArray();
                         QString responseText = choices[0].toObject()["delta"]
                                 .toObject()["content"].toString();
-                        qDebug() << "Received data: " << responseText;
+//                        qDebug() << "Received data: " << responseText;
                         m_fullResponse += responseText;
                         // Process the data as needed
                         Q_EMIT RequestHandler::newDataReceived(responseText);
@@ -85,7 +85,7 @@
 void RequestHandler::onFinished() {
     QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
     if (reply) {
-        qDebug() << "Request finished";
+//        qDebug() << "Request finished";
         addMessage("assistant", m_fullResponse);
         m_fullResponse = "";
         Q_EMIT responseFinshed();

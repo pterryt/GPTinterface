@@ -11,6 +11,7 @@
 #include "Workspace.h"
 #include "widgets/RightToolBar.h"
 #include "widgets/WSTabWidget.h"
+#include "widgets/BottomToolBar.h"
 
 namespace Ui
 {
@@ -38,6 +39,7 @@ namespace Ui
         Ui::mainwindow *ui{};
         WSTabWidget *m_tabWidget;
         RightToolBar *m_rightToolBar;
+        BottomToolBar *m_bottomToolBar;
         QWidget *m_leftWidget;
         int MAX_TABS = 8;
 
