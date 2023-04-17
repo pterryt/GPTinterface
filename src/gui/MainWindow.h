@@ -32,6 +32,7 @@ namespace Ui
         ~MainWindow() override;
 
     public Q_SLOTS:
+        void updateTokenLabels(int index);
 
     protected:
 

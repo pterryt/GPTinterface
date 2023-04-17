@@ -69,11 +69,20 @@ namespace Ui
         connect(m_rightToolBar, &RightToolBar::sendButtonClick, m_tabWidget,
                 &WSTabWidget::handleSendButtonClicked);
 
+        connect(m_tabWidget, &WSTabWidget::currentChanged, this, &MainWindow::updateTokenLabels);
+
     }
 
     MainWindow::~MainWindow()
     {
         delete ui;
+    }
+
+    void MainWindow::updateTokenLabels(int index)
+    {
+        int sumTokens = m_tabWidget->getCurrentWorkspace()->getTotalTokens();
+        int inputTokens = m_tabWidget->getCurrentWorkspace()->getInputTokens();
+        m_bottomToolBar->setTokenCounts(sumTokens, inputTokens);
     }
 
 } // Ui

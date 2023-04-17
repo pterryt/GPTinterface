@@ -10,6 +10,8 @@ Q_OBJECT
 
 public:
     explicit BottomToolBar(QWidget *parent = nullptr);
+    void setTokenCounts(const int sumTokens, const int inputTokens);
+
 private:
     QLabel *m_sumContextualTokens;
     QLabel *m_currentInputTokens;

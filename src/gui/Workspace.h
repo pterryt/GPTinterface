@@ -22,6 +22,9 @@ Q_OBJECT
 public:
 
     explicit Workspace(QWidget *parent = nullptr);
+    int getTotalTokens();
+    int getInputTokens();
+
 
 public Q_SLOTS:
 
@@ -41,6 +44,8 @@ private:
     QPointer<customTextEdit> m_currentTextEdit;
     QPointer<RequestHandler> requestHandler;
     QFont m_font{"JetBrains Mono", 16};
+    int m_inputTokens = 0;
+    int m_totalTokens = 0;
 
 
     void formatUserInput(customTextEdit* item);
@@ -49,6 +54,7 @@ private:
 
 private Q_SLOTS:
     void onNewDataReceived(const QString& data);
+    void onTokenCountUpdated(int inputCount, int totalCount);
 
 };
 

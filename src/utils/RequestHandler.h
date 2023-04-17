@@ -24,6 +24,7 @@ public:
 Q_SIGNALS:
     void newDataReceived(const QString& data);
     void responseFinshed();
+    void updateTokenDisplay(const int inputCount, const int totalCount);
 
 public Q_SLOTS:
     void onReadyRead();

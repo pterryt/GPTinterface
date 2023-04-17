@@ -25,3 +25,10 @@ BottomToolBar::BottomToolBar(QWidget *parent)
     setLayout(hlayout);
 //    setLayout(hlayout);
 }
+
+
+void BottomToolBar::setTokenCounts(const int sumTokens, const int inputTokens)
+{
+    m_currentInputTokens->setText(QString::number(inputTokens));
+    m_sumContextualTokens->setText(QString::number(sumTokens));
+}

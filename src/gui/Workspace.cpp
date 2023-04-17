@@ -22,6 +22,7 @@ Workspace::Workspace(QWidget *parent) : QWidget(parent)
     mainLayout->addWidget(m_inputBox);
 
 
+    connect(requestHandler, &RequestHandler::updateTokenDisplay, this, &Workspace::onTokenCountUpdated);
 
     connect(m_inputBox, &InputBox::enterKeyPressed, this, &Workspace::handleSendButtonClicked);
 
@@ -53,8 +54,9 @@ void Workspace::handleSendButtonClicked()
     {
         QString inputString = m_inputBox->toPlainText();
         auto *input = new customTextEdit(inputString);
-        input->setTextBackgroundColor("White");
+        input->setTextBackgroundColor(QColor("lightblue"));
         m_scrollArea->addCustomWidget(input);
+        input->updateSizeHint();
 
         m_inputBox->setText("");
 
@@ -67,6 +69,21 @@ void Workspace::handleSendButtonClicked()
     }
 }
 
+void Workspace::onTokenCountUpdated(const int inputCount, const int totalCount)
+{
+    m_inputTokens = inputCount;
+    m_totalTokens = totalCount;
+}
 
+int Workspace::getInputTokens()
+{
+    return m_inputTokens;
+}
+
+
+int Workspace::getTotalTokens()
+{
+    return m_totalTokens;
+}
 
 

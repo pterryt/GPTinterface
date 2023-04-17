@@ -18,6 +18,7 @@
         message.msg["content"] = content;
         contextContainer.currentContext.push_back(message);
         contextContainer.size += message.size;
+        Q_EMIT updateTokenDisplay(message.size, contextContainer.size);
         m_messages.append(message.msg);
     }
 
