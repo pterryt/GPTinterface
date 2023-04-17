@@ -26,9 +26,11 @@ public:
 public Q_SLOTS:
 
     void handleSendButtonClicked();
+    void handleInputChanged();
 
 Q_SIGNALS:
     void sendByKeybind();
+    void sendInputTokenCount(int count);
 
 private:
 
@@ -40,6 +42,7 @@ private:
     QPointer<QTabWidget> m_tBar;
     QPointer<customTextEdit> m_currentTextEdit;
     QPointer<RequestHandler> requestHandler;
+    QPointer<TikTokenEncoder> encoder;
     QFont m_font{"JetBrains Mono", 16};
 
 

@@ -4,10 +4,14 @@
 #include <QListWidget>
 #include <QtConcurrent/QtConcurrent>
 #include <QShortcut>
+#include "../utils/GlobalMediator.h"
 
 Workspace::Workspace(QWidget *parent) : QWidget(parent)
 {
+
+    encoder = new TikTokenEncoder(this);
     requestHandler = new RequestHandler(this);
+
     m_processingReponse = false;
     auto *mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
@@ -23,19 +27,27 @@ Workspace::Workspace(QWidget *parent) : QWidget(parent)
 
 
 
-    connect(m_inputBox, &InputBox::enterKeyPressed, this, &Workspace::handleSendButtonClicked);
+    connect(
+            m_inputBox, &InputBox::enterKeyPressed, this,
+            &Workspace::handleSendButtonClicked);
 
-    connect(requestHandler, &RequestHandler::newDataReceived, this,
+    connect(
+            requestHandler, &RequestHandler::newDataReceived, this,
             &Workspace::onNewDataReceived);
 
-    connect(requestHandler, &RequestHandler::responseFinshed, this, [this]()
-    -> void {m_processingReponse = false;});
+    connect(
+            requestHandler, &RequestHandler::responseFinshed, this,
+            [this]()-> void {m_processingReponse = false;});
+
+    connect(
+            m_inputBox, &InputBox::textChanged, this,
+            &Workspace::handleInputChanged);
 
 }
 
 /**
- * This function takes data from the SSE and appends it to the current
- * customtextEdit and updates its sizeHint
+ * This function takes data from the SSE, appends it to the current
+ * customtextEdit, and updates its sizeHint.
  * */
 void Workspace::onNewDataReceived(const QString &data)
 {
@@ -46,6 +58,7 @@ void Workspace::onNewDataReceived(const QString &data)
             m_currentTextEdit->updateSizeHint();
     }
 }
+
 
 void Workspace::handleSendButtonClicked()
 {
@@ -67,6 +80,13 @@ void Workspace::handleSendButtonClicked()
     }
 }
 
-
+/* Calculates the number of tokens in the input box and emits a single to
+ * update the bottom bar display. */
+void Workspace::handleInputChanged()
+{
+    int count = static_cast<int>(encoder->encode(m_inputBox->toPlainText().toStdString()));
+//    Q_EMIT sendInputTokenCount(count);
+    Q_EMIT GlobalMediator::instance()->sendInputTokenCount(count);
+}
 
 

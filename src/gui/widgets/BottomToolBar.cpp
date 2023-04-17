@@ -1,5 +1,6 @@
 #include "BottomToolBar.h"
 #include <QHBoxLayout>
+#include "../../utils/GlobalMediator.h"
 
 BottomToolBar::BottomToolBar(QWidget *parent)
         : QWidget(parent)
@@ -24,4 +25,12 @@ BottomToolBar::BottomToolBar(QWidget *parent)
     hlayout->addWidget(m_currentInputTokens);
     setLayout(hlayout);
 //    setLayout(hlayout);
+
+
+}
+
+
+void BottomToolBar::setCurrentInputTokens(int count)
+{
+    m_currentInputTokens->setText("Input Tokens: " + QString::number(count));
 }

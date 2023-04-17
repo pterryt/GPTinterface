@@ -3,6 +3,7 @@
 
 
 #include "gui/MainWindow.h"
+#include "utils/GlobalMediator.h"
 #include "devtools/ToolTipEventFilter.h"
 
 void installFiltersRecursively(QWidget *widget, ToolTipEventFilter *filter) {
@@ -14,6 +15,7 @@ void installFiltersRecursively(QWidget *widget, ToolTipEventFilter *filter) {
 
 int main(int argc, char *argv[])
 {
+    GlobalMediator::create();
     QApplication App(argc, argv);
     Ui::MainWindow mainWindow;
 
@@ -41,5 +43,7 @@ int main(int argc, char *argv[])
     installFiltersRecursively(&mainWindow, eventFilter);
 
     mainWindow.show();
-    return App.exec();
+    int ret = App.exec();
+    delete GlobalMediator::instance();
+    return ret;
 }

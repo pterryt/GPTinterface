@@ -6,6 +6,7 @@
 #include <QTabBar>
 #include <QVBoxLayout>
 #include <QScreen>
+#include "../utils/GlobalMediator.h"
 #include "widgets/RightToolBar.h"
 #include "widgets/BottomToolBar.h"
 
@@ -26,7 +27,6 @@ namespace Ui
 
         /*Create the parent most widget and vertical layout*/
         auto *verticalWidget = new QWidget(this);
-//        verticalWidget->setStyleSheet("border: 1px solid blue;");
         auto *verticalLayout = new QVBoxLayout(verticalWidget);
 
         /*Create the horizontal layout and widget*/
@@ -36,6 +36,7 @@ namespace Ui
 
         /*Create bottom toolbar and add it to vertical layout*/
         m_bottomToolBar = new BottomToolBar(verticalWidget);
+//        GlobalMediator::instance()->setBottomToolBar(m_bottomToolBar);
         m_bottomToolBar->setSizePolicy(QSizePolicy::Expanding,
                                        QSizePolicy::Fixed);
         m_bottomToolBar->setFixedHeight(bottomWidgetHeight);
@@ -58,6 +59,7 @@ namespace Ui
 
         // Create the right column
         m_rightToolBar = new RightToolBar(horizontalWidget);
+//        GlobalMediator::instance()->setRightToolBar(m_rightToolBar);
         m_rightToolBar->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
         m_rightToolBar->setFixedWidth(sideWidgetWidth);
         m_rightToolBar->setContentsMargins(0,0,0,0);
@@ -69,6 +71,10 @@ namespace Ui
         connect(m_rightToolBar, &RightToolBar::sendButtonClick, m_tabWidget,
                 &WSTabWidget::handleSendButtonClicked);
 
+        connect(
+                GlobalMediator::instance(), &GlobalMediator::sendInputTokenCount,
+                m_bottomToolBar, &BottomToolBar::setCurrentInputTokens
+        );
     }
 
     MainWindow::~MainWindow()

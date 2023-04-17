@@ -24,6 +24,7 @@ include_directories(${Python3_INCLUDE_DIRS})
 add_executable(GPTinterface
         src/main.cpp
         src/gui/MainWindow.cpp
+        src/utils/GlobalMediator.cpp
         src/gui/Workspace.cpp
         src/gui/widgets/RightToolBar.cpp
         src/gui/widgets/WSTabWidget.cpp
