@@ -4,7 +4,11 @@
 #include <QListWidget>
 #include <QtConcurrent/QtConcurrent>
 #include <QShortcut>
+#include <QTextBlock>
 #include "../utils/GlobalMediator.h"
+#include "widgets/textboxes/codeBlock.h"
+#include "widgets/textboxes/userText.h"
+#include "widgets/textboxes/aiText.h"
 
 Workspace::Workspace(QWidget *parent) : QWidget(parent)
 {
@@ -53,9 +57,41 @@ void Workspace::onNewDataReceived(const QString &data)
 {
     if (m_currentTextEdit)
     {
-//            qDebug() << "Appending text to CustomTextItem";
-            m_currentTextEdit->appendText(data);
-            m_currentTextEdit->updateSizeHint();
+        m_currentTextEdit->appendText(data);
+        auto* doc = m_currentTextEdit->document();
+
+        int count = static_cast<int>(data.count('\n')) ;
+
+//        qDebug() << data + " << data";
+
+        if (count > 0)
+        {
+            QTextBlock targetBlock = doc->
+                    findBlockByNumber(doc->blockCount() - (1 + count));
+
+//            qDebug() << targetBlock.text();
+
+            if (targetBlock.text().contains("```"))
+            {
+                QTextCursor cursor(doc);
+                cursor.setPosition(targetBlock.position());
+                cursor.movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
+                cursor.removeSelectedText();
+                m_currentTextEdit->updateSizeHint();
+
+                if (!m_inCodeBlock)
+                {
+                    m_currentTextEdit = new codeBlock(m_scrollArea);
+                    m_scrollArea->addCustomWidget(m_currentTextEdit);
+                    m_inCodeBlock = true;
+                }
+                else
+                {
+                    m_currentTextEdit = new aiText(m_scrollArea);
+                    m_inCodeBlock = false;
+                }
+            }
+        }
     }
 }
 
@@ -65,13 +101,12 @@ void Workspace::handleSendButtonClicked()
     if (!m_processingReponse)
     {
         QString inputString = m_inputBox->toPlainText();
-        auto *input = new customTextEdit(inputString);
-        input->setTextBackgroundColor("White");
+        auto *input = new userText(m_scrollArea);
         m_scrollArea->addCustomWidget(input);
-
+        input->appendText(inputString);
         m_inputBox->setText("");
 
-        m_currentTextEdit = new customTextEdit("");
+        m_currentTextEdit = new aiText(m_scrollArea);
         m_scrollArea->addCustomWidget(m_currentTextEdit);
         m_currentTextEdit->updateSizeHint();
 
@@ -88,5 +123,6 @@ void Workspace::handleInputChanged()
 //    Q_EMIT sendInputTokenCount(count);
     Q_EMIT GlobalMediator::instance()->sendInputTokenCount(count);
 }
+
 
 

@@ -1,28 +1,23 @@
 #include "customTextEdit.h"
 #include <QShortcut>
-#include "RightToolBar.h"
+#include "../RightToolBar.h"
 
 
-customTextEdit::customTextEdit(const QString &text, QWidget *parent)
-        : QTextEdit(text, parent)
+customTextEdit::customTextEdit(QWidget *parent)
+        : QTextEdit(parent)
 {
     setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-//    setLineWrapMode(QTextEdit::NoWrap);
     setReadOnly(true);
-
-    QFont font = QFont("JetBrains Mono");
-    font.setPointSize(22);
-    setFont(font);
-    updateSizeHint();
 
 }
 
 
 void customTextEdit::appendText(const QString &text)
 {
-    insertPlainText(text);
+   insertPlainText(text);
+   updateSizeHint();
 }
 
 void customTextEdit::updateSizeHint()
@@ -38,5 +33,4 @@ void customTextEdit::updateSizeHint()
     setMinimumHeight(height);
     setMaximumHeight(height);
     updateGeometry();
-
 }

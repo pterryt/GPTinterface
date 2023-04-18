@@ -10,7 +10,7 @@
 #include <QTabWidget>
 #include <QFutureWatcher>
 
-#include "widgets/customTextEdit.h"
+#include "widgets/textboxes/customTextEdit.h"
 #include "widgets/customScrollArea.h"
 #include "widgets/InputBox.h"
 #include "../utils/RequestHandler.h"
@@ -29,12 +29,14 @@ public Q_SLOTS:
     void handleInputChanged();
 
 Q_SIGNALS:
+
     void sendByKeybind();
     void sendInputTokenCount(int count);
 
 private:
 
     bool m_processingReponse;
+    bool m_inCodeBlock = false;
     QFutureWatcher<std::string> apiResponseWatcher;
     QPointer<customScrollArea> m_scrollArea;
     QPointer<InputBox> m_inputBox;
@@ -46,12 +48,10 @@ private:
     QFont m_font{"JetBrains Mono", 16};
 
 
-    void formatUserInput(customTextEdit* item);
-    void formatResponse(customTextEdit* item);
-
 
 private Q_SLOTS:
     void onNewDataReceived(const QString& data);
+
 
 };
 

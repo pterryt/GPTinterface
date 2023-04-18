@@ -30,11 +30,18 @@ add_executable(GPTinterface
         src/gui/widgets/WSTabWidget.cpp
         src/gui/widgets/InputBox.cpp
         src/utils/RequestHandler.cpp
-        src/gui/widgets/customTextEdit.cpp
+        src/gui/widgets/textboxes/customTextEdit.cpp
         src/gui/widgets/customScrollArea.cpp
         src/devtools/ToolTipEventFilter.cpp
         src/utils/TikTokenEncoder.cpp
-        src/gui/widgets/BottomToolBar.cpp)
+        src/gui/widgets/BottomToolBar.cpp
+        src/gui/widgets/textboxes/codeBlock.cpp
+        QSourceHighlite/languagedata.cpp
+        QSourceHighlite/qsourcehighliter.cpp
+        QSourceHighlite/qsourcehighliterthemes.cpp
+        src/gui/widgets/textboxes/aiText.cpp
+        src/gui/widgets/textboxes/userText.cpp
+        )
 
 target_link_libraries(GPTinterface
         Qt::Core

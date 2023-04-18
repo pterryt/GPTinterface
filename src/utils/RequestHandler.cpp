@@ -60,6 +60,7 @@
 
             while (!stream.atEnd()) {
                 QString line = stream.readLine();
+//                qDebug() << line;
                 if (line.startsWith("data:")) {
                     QString eventData = line.mid(5).trimmed();
                     if (eventData == "[DONE]") {

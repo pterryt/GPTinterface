@@ -3,6 +3,7 @@
 
 #include <QScrollArea>
 #include <QVBoxLayout>
+#include <QTextDocument>
 
 class customScrollArea : public QScrollArea
 {
