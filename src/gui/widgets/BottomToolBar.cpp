@@ -5,32 +5,36 @@
 BottomToolBar::BottomToolBar(QWidget *parent)
         : QWidget(parent)
 {
-    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     auto *hlayout = new QHBoxLayout(this);
-    hlayout->setContentsMargins(0,0,0,0);
-    hlayout->setSpacing(0);
-    hlayout->addStretch();
-    m_sumContextualTokens = new QLabel("contextual", this);
-    m_currentInputTokens = new QLabel("current", this);
-    m_sumContextualTokens->setStyleSheet("border: 1px solid red;");
+    hlayout->setSpacing(25);
+
+    m_sumContextualTokens = new QLabel("Context: 0", parent);
+    m_sumContextualTokens->setSizePolicy(QSizePolicy::Preferred,
+                                         QSizePolicy::Preferred);
+    m_currentInputTokens = new QLabel("Input: 0", parent);
+    m_currentInputTokens->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
     QFont font = QFont("JetBrains Mono");
     font.setPointSize(12);
     m_sumContextualTokens->setFont(font);
     m_currentInputTokens->setFont(font);
 
-    setStyleSheet("border:1px solid red;");
-
     hlayout->addWidget(m_sumContextualTokens);
     hlayout->addWidget(m_currentInputTokens);
+
     setLayout(hlayout);
-//    setLayout(hlayout);
 
 
 }
 
-
 void BottomToolBar::setCurrentInputTokens(int count)
 {
-    m_currentInputTokens->setText("Input Tokens: " + QString::number(count));
+    m_currentInputTokens->setText("Input: " + QString::number(count));
+}
+
+void BottomToolBar::setSumContextTokens(int count)
+{
+    m_sumContextualTokens->setText("Context: " + QString::number
+    (count));
 }

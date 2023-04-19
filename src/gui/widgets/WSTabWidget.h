@@ -14,6 +14,8 @@ public:
 
     explicit WSTabWidget(QWidget *parent = nullptr);
 
+    Workspace* getCurrentWorkspace();
+
 public Q_SLOTS:
 
     void handleTabBarClicked(int index);

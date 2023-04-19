@@ -17,13 +17,14 @@ class RequestHandler : public QObject
 
 public:
     explicit RequestHandler(QObject* parent = nullptr);
-    void startStreaming(const QString &input);
+    void startStreaming(int tokens, const QString &input);
 
-    void addMessage(const QString &role, const QString& content);
+    void addMessage(int tokens, const QString &role, const QString& content);
 
 Q_SIGNALS:
     void newDataReceived(const QString& data);
     void responseFinshed();
+    void sendTotalTokensCalculated(int count);
 
 public Q_SLOTS:
     void onReadyRead();

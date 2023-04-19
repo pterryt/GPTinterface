@@ -5,6 +5,7 @@
 
 class RightToolBar;
 class BottomToolBar;
+class WSTabWidget;
 
 class GlobalMediator : public QObject
 {
@@ -20,9 +21,11 @@ public:
 
     GlobalMediator* setRightToolBar(RightToolBar* rtb);
     GlobalMediator* setBottomToolBar(BottomToolBar* btb);
+    GlobalMediator* setWSTabWidget(WSTabWidget* wstw);
 
     RightToolBar* getRightToolBar();
     BottomToolBar* getBottomToolBar();
+    WSTabWidget* getWSTabWidget();
 
     Q_SIGNALS:
     void sendInputTokenCount(int count);
@@ -36,6 +39,7 @@ private:
 
     RightToolBar *m_rightToolBar;
     BottomToolBar *m_bottomToolBar;
+    WSTabWidget *m_tabWidget;
 
 
 

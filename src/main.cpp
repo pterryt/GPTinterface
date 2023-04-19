@@ -42,6 +42,7 @@ int main(int argc, char *argv[])
     ToolTipEventFilter *eventFilter = new ToolTipEventFilter(&mainWindow);
     installFiltersRecursively(&mainWindow, eventFilter);
 
+
     mainWindow.show();
     int ret = App.exec();
     delete GlobalMediator::instance();

@@ -5,6 +5,9 @@
 RightToolBar::RightToolBar(QWidget *parent)
         : QWidget(parent)
 {
+    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+    setContentsMargins(0,0,0,0);
+
     QIcon sendIcon = QIcon("../icon/send.png");
     QIcon micIcon = QIcon("../icon/mic.png");
     QIcon settingsIcon = QIcon("../icon/settings.png");

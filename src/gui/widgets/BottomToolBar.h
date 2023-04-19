@@ -15,6 +15,7 @@ public:
 public Q_SLOTS:
 
     void setCurrentInputTokens(int count);
+    void setSumContextTokens(int count);
 
 private:
     QLabel *m_sumContextualTokens;

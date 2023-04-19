@@ -2,7 +2,7 @@
 #include <QUrl>
 #include <QtNetwork/QtNetwork>
 #include <QtNetwork/QNetworkAccessManager>
-
+#include "GlobalMediator.h"
 
     RequestHandler::RequestHandler(QObject* parent) : QObject(parent),
     networkManager(new QNetworkAccessManager(this))
@@ -10,20 +10,23 @@
         m_encoder = new TikTokenEncoder(this);
     }
 
-    void RequestHandler::addMessage(const QString &role, const QString &content)
+    void RequestHandler::addMessage(int tokens, const QString &role, const
+    QString
+    &content)
     {
         Message message;
-        message.size = m_encoder->encode(content.toStdString());
+        message.size = tokens;
         message.msg["role"] = role;
         message.msg["content"] = content;
         contextContainer.currentContext.push_back(message);
-        contextContainer.size += message.size;
+        contextContainer.size += tokens;
+        Q_EMIT sendTotalTokensCalculated(contextContainer.size);
         m_messages.append(message.msg);
     }
 
-    void RequestHandler::startStreaming(const QString& input)
+    void RequestHandler::startStreaming(int tokens, const QString& input)
     {
-        addMessage("user", input);
+        addMessage(tokens, "user", input);
 
         QUrl url("https://api.openai.com/v1/chat/completions");
         QNetworkRequest request(url);
@@ -44,6 +47,7 @@
 
         // Convert the JSON object to a QByteArray
         QByteArray jsonData = QJsonDocument(requestBody).toJson();
+//        qDebug() << jsonData;
 
         QNetworkReply* reply = networkManager->post(request, jsonData);
         connect(reply, &QNetworkReply::readyRead, this, &RequestHandler::onReadyRead);
@@ -52,7 +56,8 @@
     }
 
 
-    void RequestHandler::onReadyRead() {
+    void RequestHandler::onReadyRead()
+    {
         QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
         if (reply) {
             QByteArray data = reply->readAll();
@@ -87,7 +92,8 @@ void RequestHandler::onFinished() {
     QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
     if (reply) {
 //        qDebug() << "Request finished";
-        addMessage("assistant", m_fullResponse);
+        int tokens = m_encoder->encode(m_fullResponse.toStdString());
+        addMessage(tokens, "assistant", m_fullResponse);
         m_fullResponse = "";
         Q_EMIT responseFinshed();
         reply->deleteLater();

@@ -6,6 +6,10 @@ WSTabWidget::WSTabWidget(QWidget *parent)
     addTab(new QWidget(this), QString::fromStdString("+"));
     newTab();
 
+    /* setup font */
+    QFont font = QFont("JetBrains Mono");
+    font.setPointSize(14);
+    tabBar()->setFont(font);
 
     // connect clicking on end tab to new tab creation
     connect(tabBar(), &QTabBar::tabBarClicked, this,
@@ -32,10 +36,15 @@ void WSTabWidget::newTab()
     }
 }
 
+Workspace *WSTabWidget::getCurrentWorkspace()
+{
+    return qobject_cast<Workspace *>(this->currentWidget());
+}
+
 void WSTabWidget::handleSendButtonClicked()
 {
-    Workspace *currentWorkspace = qobject_cast<Workspace *>(this->currentWidget
-    ());
+    Workspace *currentWorkspace = getCurrentWorkspace();
+
     if(currentWorkspace)
     {
        currentWorkspace->handleSendButtonClicked();

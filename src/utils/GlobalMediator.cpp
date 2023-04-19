@@ -30,6 +30,12 @@ GlobalMediator *GlobalMediator::setBottomToolBar(BottomToolBar *btb)
     return m_mediator;
 }
 
+GlobalMediator *GlobalMediator::setWSTabWidget(WSTabWidget *wstw)
+{
+    m_tabWidget = wstw;
+    return m_mediator;
+}
+
 RightToolBar *GlobalMediator::getRightToolBar()
 {
     return m_rightToolBar;
@@ -38,4 +44,9 @@ RightToolBar *GlobalMediator::getRightToolBar()
 BottomToolBar *GlobalMediator::getBottomToolBar()
 {
     return m_bottomToolBar;
+}
+
+WSTabWidget *GlobalMediator::getWSTabWidget()
+{
+    return m_tabWidget;
 }

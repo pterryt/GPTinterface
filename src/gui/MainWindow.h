@@ -41,8 +41,12 @@ namespace Ui
         RightToolBar *m_rightToolBar;
         BottomToolBar *m_bottomToolBar;
         QWidget *m_leftWidget;
+        QScreen *m_screen;
+        QVBoxLayout *m_verticalLayout;
+        QWidget *m_verticalWidget;
         int MAX_TABS = 8;
 
+        void iniBottomBar();
     };
 } // Ui
 

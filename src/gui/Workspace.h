@@ -27,16 +27,18 @@ public Q_SLOTS:
 
     void handleSendButtonClicked();
     void handleInputChanged();
+    void handleTotalTokensCalculated(int count);
 
 Q_SIGNALS:
 
     void sendByKeybind();
-    void sendInputTokenCount(int count);
 
 private:
 
     bool m_processingReponse;
     bool m_inCodeBlock = false;
+    int m_inputCount = 0;
+    int m_totalCount = 0;
     QFutureWatcher<std::string> apiResponseWatcher;
     QPointer<customScrollArea> m_scrollArea;
     QPointer<InputBox> m_inputBox;

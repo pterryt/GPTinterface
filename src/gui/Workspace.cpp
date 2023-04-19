@@ -9,6 +9,8 @@
 #include "widgets/textboxes/codeBlock.h"
 #include "widgets/textboxes/userText.h"
 #include "widgets/textboxes/aiText.h"
+#include "widgets/WSTabWidget.h"
+#include "widgets/BottomToolBar.h"
 
 Workspace::Workspace(QWidget *parent) : QWidget(parent)
 {
@@ -29,8 +31,6 @@ Workspace::Workspace(QWidget *parent) : QWidget(parent)
     mainLayout->addWidget(m_spacer);
     mainLayout->addWidget(m_inputBox);
 
-
-
     connect(
             m_inputBox, &InputBox::enterKeyPressed, this,
             &Workspace::handleSendButtonClicked);
@@ -46,6 +46,11 @@ Workspace::Workspace(QWidget *parent) : QWidget(parent)
     connect(
             m_inputBox, &InputBox::textChanged, this,
             &Workspace::handleInputChanged);
+
+    connect(
+            requestHandler, &RequestHandler::sendTotalTokensCalculated, this,
+            &Workspace::handleTotalTokensCalculated
+            );
 
 }
 
@@ -104,14 +109,14 @@ void Workspace::handleSendButtonClicked()
         auto *input = new userText(m_scrollArea);
         m_scrollArea->addCustomWidget(input);
         input->appendText(inputString);
-        m_inputBox->setText("");
 
         m_currentTextEdit = new aiText(m_scrollArea);
         m_scrollArea->addCustomWidget(m_currentTextEdit);
         m_currentTextEdit->updateSizeHint();
 
         m_processingReponse = true;
-        requestHandler->startStreaming(inputString);
+        requestHandler->startStreaming(m_inputCount, inputString);
+        m_inputBox->setText("");
     }
 }
 
@@ -119,10 +124,19 @@ void Workspace::handleSendButtonClicked()
  * update the bottom bar display. */
 void Workspace::handleInputChanged()
 {
-    int count = static_cast<int>(encoder->encode(m_inputBox->toPlainText().toStdString()));
-//    Q_EMIT sendInputTokenCount(count);
-    Q_EMIT GlobalMediator::instance()->sendInputTokenCount(count);
+    m_inputCount = encoder->encode(
+            m_inputBox->toPlainText().toStdString());
+
+    Q_EMIT GlobalMediator::instance()->sendInputTokenCount(m_inputCount);
 }
 
-
+void Workspace::handleTotalTokensCalculated(int count)
+{
+   m_totalCount = count;
+   if (GlobalMediator::instance()->getWSTabWidget()->getCurrentWorkspace() ==
+   this)
+   {
+       GlobalMediator::instance()->getBottomToolBar()->setSumContextTokens(count);
+   }
+}
 
