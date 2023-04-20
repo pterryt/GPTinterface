@@ -20,7 +20,7 @@
         message.msg["content"] = content;
         contextContainer.currentContext.push_back(message);
         contextContainer.size += tokens;
-        Q_EMIT sendTotalTokensCalculated(contextContainer.size);
+        Q_EMIT sendContextTokensCalculated(contextContainer.size);
         m_messages.append(message.msg);
     }
 
@@ -92,7 +92,12 @@ void RequestHandler::onFinished() {
     QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
     if (reply) {
 //        qDebug() << "Request finished";
+        auto start = std::chrono::high_resolution_clock::now();
         int tokens = m_encoder->encode(m_fullResponse.toStdString());
+        auto end = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>
+                (end - start);
+        qDebug() << "Tiktoken time required: " << duration.count();
         addMessage(tokens, "assistant", m_fullResponse);
         m_fullResponse = "";
         Q_EMIT responseFinshed();

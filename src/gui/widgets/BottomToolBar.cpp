@@ -28,13 +28,19 @@ BottomToolBar::BottomToolBar(QWidget *parent)
 
 }
 
-void BottomToolBar::setCurrentInputTokens(int count)
+void BottomToolBar::setInputTokens(int count)
 {
     m_currentInputTokens->setText("Input: " + QString::number(count));
 }
 
-void BottomToolBar::setSumContextTokens(int count)
+void BottomToolBar::setContextTokens(int count)
 {
     m_sumContextualTokens->setText("Context: " + QString::number
     (count));
+}
+
+void BottomToolBar::handleTabChanged(int input, int context)
+{
+    setInputTokens(input);
+    setContextTokens(context);
 }

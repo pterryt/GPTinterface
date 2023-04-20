@@ -76,10 +76,20 @@ namespace Ui
                 &WSTabWidget::handleSendButtonClicked);
 
         connect(
-                GlobalMediator::instance(), &GlobalMediator::sendInputTokenCount,
-                m_bottomToolBar, &BottomToolBar::setCurrentInputTokens
+                m_tabWidget, &WSTabWidget::sendTokenCounts, m_bottomToolBar,
+                &BottomToolBar::handleTabChanged
         );
 
+        connect(
+                GlobalMediator::instance(), &GlobalMediator::sendInputTokenCount,
+                m_bottomToolBar, &BottomToolBar::setInputTokens
+        );
+
+        connect(m_tabWidget, &WSTabWidget::sendCurrentWorkspaceChanged, this,
+                &MainWindow::registerCurrentWorkspace);
+
+
+        registerCurrentWorkspace(); // (4/20/23) TODO: unhack this
     }
 
     MainWindow::~MainWindow()
@@ -152,5 +162,28 @@ namespace Ui
         } else {
             QMainWindow::keyPressEvent(event);
         }
+    }
+
+    void MainWindow::registerCurrentWorkspace()
+    {
+        if (m_currentWorkspace)
+        {
+            unregisterCurrentWorkspace();
+        }
+        m_currentWorkspace = m_tabWidget->getCurrentWorkspace();
+        qDebug() << "registering workspace";
+        connect(
+                m_currentWorkspace, &Workspace::sendContextTokens,
+                m_bottomToolBar,
+                &BottomToolBar::setContextTokens
+                );
+    }
+
+    void MainWindow::unregisterCurrentWorkspace()
+    {
+        disconnect(
+               m_currentWorkspace, &Workspace::sendContextTokens,
+               m_bottomToolBar, &BottomToolBar::setContextTokens
+                );
     }
 } // Uik

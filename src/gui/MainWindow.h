@@ -36,6 +36,9 @@ namespace Ui
 
     public Q_SLOTS:
 
+        void unregisterCurrentWorkspace();
+        void registerCurrentWorkspace();
+
     protected:
         void resizeEvent(QResizeEvent *event) override
         {
@@ -47,6 +50,7 @@ namespace Ui
 
     private:
         Ui::mainwindow *ui{};
+        Workspace *m_currentWorkspace = nullptr;
         WSTabWidget *m_tabWidget;
         RightToolBar *m_rightToolBar;
         BottomToolBar *m_bottomToolBar;

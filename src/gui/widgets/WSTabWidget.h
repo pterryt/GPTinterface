@@ -16,9 +16,16 @@ public:
 
     Workspace* getCurrentWorkspace();
 
+    Q_SIGNALS:
+
+    void sendTokenCounts(int input, int context);
+    void sendCurrentWorkspaceChanged();
+
+
 public Q_SLOTS:
 
-    void handleTabBarClicked(int index);
+    void handleNewTabClicked(int index);
+    void handleTabChanged(int index);
 
     void newTab();
 
@@ -26,8 +33,10 @@ public Q_SLOTS:
 
 private:
 
+    Workspace *m_currentWorkspace = nullptr;
     int MAX_TABS = 8;
 
+protected:
 };
 
 #endif // GPTINTERFACE_WSTABWIDGET_H

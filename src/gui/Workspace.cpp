@@ -47,8 +47,8 @@ Workspace::Workspace(QWidget *parent) : QWidget(parent)
             &Workspace::handleInputChanged);
 
     connect(
-            requestHandler, &RequestHandler::sendTotalTokensCalculated, this,
-            &Workspace::handleTotalTokensCalculated
+            requestHandler, &RequestHandler::sendContextTokensCalculated, this,
+            &Workspace::handleContextTokensCalculated
             );
 
 }
@@ -59,6 +59,7 @@ Workspace::Workspace(QWidget *parent) : QWidget(parent)
  * */
 void Workspace::onNewDataReceived(const QString &data)
 {
+    qDebug() << data;
     if (m_currentTextEdit)
     {
         m_currentTextEdit->appendText(data);
@@ -88,6 +89,7 @@ void Workspace::onNewDataReceived(const QString &data)
                 else
                 {
                     m_currentTextEdit = new aiText(m_scrollArea);
+                    m_scrollArea->addCustomWidget(m_currentTextEdit);
                     m_inCodeBlock = false;
                 }
             }
@@ -127,18 +129,25 @@ void Workspace::handleInputChanged()
     Q_EMIT GlobalMediator::instance()->sendInputTokenCount(m_inputCount);
 }
 
-void Workspace::handleTotalTokensCalculated(int count)
+void Workspace::handleContextTokensCalculated(int count)
 {
-   m_totalCount = count;
-   if (GlobalMediator::instance()->getWSTabWidget()->getCurrentWorkspace() ==
-   this)
-   {
-       GlobalMediator::instance()->getBottomToolBar()->setSumContextTokens(count);
-   }
+   m_ContextCount = count;
+   qDebug() << count;
+   Q_EMIT sendContextTokens(count);
 }
 
 InputBox *Workspace::getinputBox()
 {
     return m_inputBox;
+}
+
+int Workspace::getInputCount() const
+{
+    return m_inputCount;
+}
+
+int Workspace::getContextCount() const
+{
+    return m_ContextCount;
 }
 

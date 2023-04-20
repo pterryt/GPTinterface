@@ -24,7 +24,7 @@ public:
 Q_SIGNALS:
     void newDataReceived(const QString& data);
     void responseFinshed();
-    void sendTotalTokensCalculated(int count);
+    void sendContextTokensCalculated(int count);
 
 public Q_SLOTS:
     void onReadyRead();

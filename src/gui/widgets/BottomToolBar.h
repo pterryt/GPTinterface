@@ -14,8 +14,9 @@ public:
 
 public Q_SLOTS:
 
-    void setCurrentInputTokens(int count);
-    void setSumContextTokens(int count);
+    void setInputTokens(int count);
+    void setContextTokens(int count);
+    void handleTabChanged(int input, int context);
 
 private:
     QLabel *m_sumContextualTokens;
