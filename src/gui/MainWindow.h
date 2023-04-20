@@ -31,9 +31,19 @@ namespace Ui
 
         ~MainWindow() override;
 
+        Q_SIGNALS:
+        void resized();
+
     public Q_SLOTS:
 
     protected:
+        void resizeEvent(QResizeEvent *event) override
+        {
+        QMainWindow::resizeEvent(event);
+        Q_EMIT resized();
+        };
+
+        void keyPressEvent(QKeyEvent *event) override;
 
     private:
         Ui::mainwindow *ui{};
@@ -44,9 +54,19 @@ namespace Ui
         QScreen *m_screen;
         QVBoxLayout *m_verticalLayout;
         QWidget *m_verticalWidget;
+        QHBoxLayout * m_horizontalLayout;
+        QWidget *m_horizontalWidget;
+
+        QWidget *rtContent;
+
+        int m_sideWidgetWidth;
         int MAX_TABS = 8;
 
         void iniBottomBar();
+        void iniRightBar();
+        void iniLeftBar();
+
+        void setSidebarHeight();
     };
 } // Ui
 

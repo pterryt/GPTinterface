@@ -5,10 +5,11 @@
 
 #include <QTabBar>
 #include <QVBoxLayout>
-#include <QScreen>
+#include <QKeyEvent>
 #include "../utils/GlobalMediator.h"
 #include "widgets/RightToolBar.h"
 #include "widgets/BottomToolBar.h"
+
 
 
 namespace Ui
@@ -16,58 +17,69 @@ namespace Ui
     MainWindow::MainWindow(QWidget *parent) :
             QMainWindow(parent), ui(new Ui::mainwindow)
     {
-        /*initialize UI objects from design*/
+        /* INI DESIGN */
         ui->setupUi(this);
 
-        /*Get toolbar sizes based on percentage of screen size*/
         m_screen = QGuiApplication::primaryScreen();
-        int sideWidgetWidth = static_cast<int>(m_screen->size().width() * .02);
+        m_sideWidgetWidth = static_cast<int>(m_screen->size().width() * .02);
 
-        /*Create the parent most widget and vertical layout*/
+
+        /* HORIZONTAL */
+        m_horizontalWidget = new QWidget(this);
+        m_horizontalLayout = new QHBoxLayout(m_horizontalWidget);
+        m_horizontalLayout->setContentsMargins(1,0,1,0);
+        m_horizontalLayout->setSpacing(0);
+
+        /* VERTICAL */
         m_verticalWidget = new QWidget(this);
         m_verticalLayout = new QVBoxLayout(m_verticalWidget);
-        m_verticalLayout->setContentsMargins(10,0,10,0);
+        m_verticalLayout->setContentsMargins(1,0,0,1);
+        m_verticalLayout->setSpacing(0);
+        m_verticalWidget->setLayout(m_verticalLayout);
+        m_verticalLayout->addWidget(m_horizontalWidget);
 
-        /*Create the horizontal layout and widget*/
-        auto *horizontalWidget = new QWidget(m_verticalWidget);
-        m_verticalLayout->addWidget(horizontalWidget);
-
-        /* set up bottom bar */
+        /* BOTTOM */
         iniBottomBar();
 
-        m_verticalWidget->setLayout(m_verticalLayout);
-        auto *horizontalLayout = new QHBoxLayout(horizontalWidget);
-
-        // Create the left column
-        m_leftWidget = new QWidget(horizontalWidget);
+        /* LEFT */
+        m_leftWidget = new QWidget(m_horizontalWidget);
         m_leftWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-        m_leftWidget->setFixedWidth(sideWidgetWidth);
-        auto* leftLayout = new QHBoxLayout(m_leftWidget);
-        horizontalLayout->addWidget(m_leftWidget, 0);
+        m_leftWidget->setFixedWidth(m_sideWidgetWidth);
+        m_leftWidget->setObjectName("LeftB");
+        m_leftWidget->setStyleSheet("#LeftB {"
+                                 "border-top: 1px solid #545454;"
+                                 "border-left: 1px solid #545454;"
+                                 "border-right: 1px solid #545454;"
+                                 "border-bottom: none; margin: "
+                                 "0px; padding: 0px;"
+                                 "}");
+        m_horizontalLayout->addWidget(m_leftWidget, 0, Qt::AlignBottom);
 
-        // Create center column
-        m_tabWidget = new WSTabWidget(horizontalWidget);
+        /* TAB WIDGET */
+        m_tabWidget = new WSTabWidget(m_horizontalWidget);
         GlobalMediator::instance()->setWSTabWidget(m_tabWidget);
-        horizontalLayout->addWidget(m_tabWidget, 0);
+        m_horizontalLayout->addWidget(m_tabWidget, 0);
 
-        // Create the right column
-        m_rightToolBar = new RightToolBar(horizontalWidget);
-        m_rightToolBar->setFixedWidth(sideWidgetWidth);
-        horizontalLayout->addWidget(m_rightToolBar, 0, Qt::AlignRight);
+        /* RIGHT */
+        iniRightBar();
 
-        //set central widget
+        /* FINALIZE */
         setCentralWidget(m_verticalWidget);
 
 
 
+        connect(
+                this, &MainWindow::resized, this, &MainWindow::setSidebarHeight);
 
-        connect(m_rightToolBar, &RightToolBar::sendButtonClick, m_tabWidget,
+        connect(
+                m_rightToolBar, &RightToolBar::sendButtonClick, m_tabWidget,
                 &WSTabWidget::handleSendButtonClicked);
 
         connect(
                 GlobalMediator::instance(), &GlobalMediator::sendInputTokenCount,
                 m_bottomToolBar, &BottomToolBar::setCurrentInputTokens
         );
+
     }
 
     MainWindow::~MainWindow()
@@ -87,10 +99,58 @@ namespace Ui
         btmContent->setLayout(btmLayout);
         m_bottomToolBar->setFixedHeight(bottomWidgetHeight);
         btmContent->setObjectName("Outer");
-        btmContent->setStyleSheet("#Outer { border:1px solid black; }");
+        btmContent->setStyleSheet("#Outer { border:1px solid #545454; margin: "
+                                  "0px; padding: 0px;"
+                                  "}");
         m_verticalLayout->addWidget(btmContent);
         btmContent->setFixedHeight(bottomWidgetHeight);
         GlobalMediator::instance()->setBottomToolBar(m_bottomToolBar);
     }
 
-} // Ui
+    void MainWindow::iniRightBar()
+    {
+        rtContent = new QWidget(m_horizontalWidget);
+        auto* rtLayout = new QVBoxLayout(rtContent);
+        rtLayout->setContentsMargins(5,5,5,5);
+        rtContent->setLayout(rtLayout);
+        rtContent->setObjectName("RightB");
+        rtContent->setStyleSheet("#RightB {"
+                                 "border-top: 1px solid #545454;"
+                                 "border-left: 1px solid #545454;"
+                                 "border-right: 1px solid #545454;"
+                                 "border-bottom: none; margin: "
+                                 "0px; padding: 0px;"
+         "}");
+        m_rightToolBar = new RightToolBar(rtContent);
+        m_rightToolBar->setFixedWidth(m_sideWidgetWidth);
+        rtLayout->addWidget(m_rightToolBar);
+        m_horizontalLayout->addWidget(rtContent, 0, Qt::AlignBottom);
+    }
+
+
+    void MainWindow::setSidebarHeight()
+    {
+
+        int tabHeight = m_tabWidget->tabBar()->size().height();
+        if (tabHeight)
+        {
+            rtContent->setFixedHeight(m_tabWidget->height() - tabHeight);
+            m_leftWidget->setFixedHeight(m_tabWidget->height() - tabHeight);
+            /* FIX THIS  */ //// (4/19/23) TODO: fix this tmp fix
+            m_leftWidget->setFixedWidth(rtContent->width());
+        }
+    }
+
+    void MainWindow::keyPressEvent(QKeyEvent *event)
+    {
+        if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
+            if (event->modifiers() & Qt::ShiftModifier) {
+                if (m_tabWidget->getCurrentWorkspace()->getinputBox()) {
+                    m_tabWidget->getCurrentWorkspace()->getinputBox()->setFocus();
+                }
+            }
+        } else {
+            QMainWindow::keyPressEvent(event);
+        }
+    }
+} // Uik

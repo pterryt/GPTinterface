@@ -28,6 +28,9 @@ private Q_SLOTS:
 
     void handleSendButtonClicked();
 
+protected:
+    void resizeEvent(QResizeEvent *event) override;
+
 };
 
 #endif // GPTINTERFACE_RIGHTTOOLBAR_H

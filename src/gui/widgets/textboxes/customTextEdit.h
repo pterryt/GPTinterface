@@ -11,16 +11,12 @@ class customTextEdit : public QTextEdit
 public:
 
     explicit customTextEdit(QWidget *parent = nullptr);
-
-/*
-    bool isCodeBlock();
-
-    void setCodeBlock(bool isCodeBlock);
-*/
+    QTextCursor *m_appendCursor;
+    void removeTrailingBlankLines();
 
     Q_SIGNALS:
 
-    void newLineAppended();
+//    void newLineAppended();
 
 
 public Q_SLOTS:

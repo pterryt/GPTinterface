@@ -56,7 +56,14 @@ void InputBox::adjustHeight()
 void InputBox::keyPressEvent(QKeyEvent *e) {
     if (e->key() == Qt::Key_Return)
     {
-        Q_EMIT enterKeyPressed();
+        if (e->modifiers() & Qt::ShiftModifier)
+        {
+            Q_EMIT enterKeyPressed();
+        }
+        else
+        {
+            QTextEdit::keyPressEvent(e);
+        }
     }
     else
     {

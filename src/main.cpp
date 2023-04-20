@@ -35,12 +35,14 @@ int main(int argc, char *argv[])
     darkPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
     darkPalette.setColor(QPalette::HighlightedText, Qt::black);
     QApplication::setPalette(darkPalette);
-    App.setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; "
-                      "border: 1px solid black; font-size: 22px}");
 
-    /* Add toolips to all objects recursively */
-    ToolTipEventFilter *eventFilter = new ToolTipEventFilter(&mainWindow);
-    installFiltersRecursively(&mainWindow, eventFilter);
+
+//    App.setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; "
+//                      "border: 1px solid black; font-size: 22px}");
+//
+//    /* Add toolips to all objects recursively */
+//    ToolTipEventFilter *eventFilter = new ToolTipEventFilter(&mainWindow);
+//    installFiltersRecursively(&mainWindow, eventFilter);
 
 
     mainWindow.show();
