@@ -25,7 +25,7 @@ codeBlock::codeBlock(QWidget *parent)
 
 void codeBlock::appendText(const QString &text)
 {
-    insertPlainText(text);
+    customTextEdit::appendText(text);
     if (!text.contains('\n'))
     {
         m_syntaxHL->rehighlightBlock(m_doc->lastBlock().previous());

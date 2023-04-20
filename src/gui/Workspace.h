@@ -22,6 +22,7 @@ Q_OBJECT
 public:
 
     explicit Workspace(QWidget *parent = nullptr);
+    InputBox *getinputBox();
 
 public Q_SLOTS:
 
