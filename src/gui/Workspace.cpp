@@ -11,6 +11,7 @@
 #include "widgets/textboxes/aiText.h"
 #include "widgets/WSTabWidget.h"
 #include "widgets/BottomToolBar.h"
+#include <QAbstractTextDocumentLayout>
 
 Workspace::Workspace(QWidget *parent) : QWidget(parent)
 {
@@ -104,10 +105,10 @@ void Workspace::handleSendButtonClicked()
     {
         QString inputString = m_inputBox->toPlainText();
         if (inputString == "") return;
-        auto *input = new userText(m_scrollArea);
-        m_scrollArea->addCustomWidget(input);
-        input->appendText(inputString);
-        input->removeTrailingBlankLines();
+        m_currentInput = new userText(m_scrollArea);
+        m_scrollArea->addCustomWidget(m_currentInput);
+        m_currentInput->updateSizeHint();
+        m_currentInput->appendText(inputString);
 
         m_currentTextEdit = new aiText(m_scrollArea);
         m_scrollArea->addCustomWidget(m_currentTextEdit);
@@ -132,7 +133,7 @@ void Workspace::handleInputChanged()
 void Workspace::handleContextTokensCalculated(int count)
 {
    m_ContextCount = count;
-   qDebug() << count;
+//   qDebug() << count;
    Q_EMIT sendContextTokens(count);
 }
 

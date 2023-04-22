@@ -49,6 +49,7 @@ private:
     QPointer<QWidget> m_spacer;
     QPointer<QTabWidget> m_tBar;
     QPointer<customTextEdit> m_currentTextEdit;
+    QPointer<customTextEdit> m_currentInput;
     QPointer<RequestHandler> requestHandler;
     QPointer<TikTokenEncoder> encoder;
     QFont m_font{"JetBrains Mono", 16};

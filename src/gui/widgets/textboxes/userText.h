@@ -11,6 +11,7 @@ public:
 
     explicit userText(QWidget *parent = nullptr);
 
+
 public Q_SLOTS:
 
 private:

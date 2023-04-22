@@ -3,6 +3,7 @@
 #include <iostream>
 #include "../RightToolBar.h"
 #include <QTextBlock>
+#include <QAbstractTextDocumentLayout>
 
 
 customTextEdit::customTextEdit(QWidget *parent)
@@ -11,12 +12,15 @@ customTextEdit::customTextEdit(QWidget *parent)
     setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    setStyleSheet("padding: 0px; margin: 0px;");
-//    setLineWrapMode(WidgetWidth);
-    setLineWrapMode(NoWrap);
+//    setStyleSheet("padding: 0px; margin: 0px;");
+    setLineWrapMode(WidgetWidth);
+    setContentsMargins(0,0,0,0);
+//    setLineWrapMode(NoWrap);
     setReadOnly(true);
     QTextDocument *doc = document();
     doc->setDocumentMargin(0);
+    int viewportWidth = viewport()->width();
+    document()->setTextWidth(viewportWidth);
     m_appendCursor = new QTextCursor(document());
 }
 
@@ -30,20 +34,30 @@ void customTextEdit::appendText(const QString &text)
 
 void customTextEdit::updateSizeHint()
 {
-    document()->adjustSize();
+//    document()->adjustSize();
+    qDebug() << "the width of document: " << document()->size().width();
+    qDebug() << "the width of widget : " << size().width();
+    int viewportWidth = viewport()->width();
+    document()->setTextWidth(viewportWidth);
 
     int contentsMarginsTop = contentsMargins().top();
     int contentsMarginsBottom = contentsMargins().bottom();
 
+    qDebug() << "Document size:" << document()->size();
+    qDebug() << "Contents margins top:" << contentsMarginsTop;
+    qDebug() << "Contents margins bottom:" << contentsMarginsBottom;
+
+
     int height = document()->size().height() + contentsMarginsBottom +
             contentsMarginsTop;
+
+    qDebug() << "Updating size hint. Width:" << viewportWidth << "Height:" << height;
 
     setMinimumHeight(height);
     setMaximumHeight(height);
     updateGeometry();
 
 }
-
 
 void customTextEdit::removeTrailingBlankLines()
 {

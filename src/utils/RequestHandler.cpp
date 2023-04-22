@@ -97,7 +97,7 @@ void RequestHandler::onFinished() {
         auto end = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>
                 (end - start);
-        qDebug() << "Tiktoken time required: " << duration.count();
+//        qDebug() << "Tiktoken time required: " << duration.count();
         addMessage(tokens, "assistant", m_fullResponse);
         m_fullResponse = "";
         Q_EMIT responseFinshed();
