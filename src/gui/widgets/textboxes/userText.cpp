@@ -5,7 +5,6 @@ userText::userText(QWidget *parent)
         : customTextEdit(parent)
 {
 
-    qDebug() << "userText appended now.";
     /* setup page style */
     QTextFrame *rootFrame = m_doc->rootFrame();
     QTextFrameFormat frameFormat = rootFrame->frameFormat();

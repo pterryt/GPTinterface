@@ -23,7 +23,7 @@ public Q_SLOTS:
 
     virtual void appendText(const QString &text);
 
-    virtual void updateSizeHint();
+    void updateSizeHint();
 
 private:
 

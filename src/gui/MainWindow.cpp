@@ -171,7 +171,7 @@ namespace Ui
             unregisterCurrentWorkspace();
         }
         m_currentWorkspace = m_tabWidget->getCurrentWorkspace();
-        qDebug() << "registering workspace";
+
         connect(
                 m_currentWorkspace, &Workspace::sendContextTokens,
                 m_bottomToolBar,

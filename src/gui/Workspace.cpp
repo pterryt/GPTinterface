@@ -12,6 +12,7 @@
 #include "widgets/WSTabWidget.h"
 #include "widgets/BottomToolBar.h"
 #include <QAbstractTextDocumentLayout>
+#include <QScrollBar>
 
 Workspace::Workspace(QWidget *parent) : QWidget(parent)
 {
@@ -60,10 +61,13 @@ Workspace::Workspace(QWidget *parent) : QWidget(parent)
  * */
 void Workspace::onNewDataReceived(const QString &data)
 {
-    qDebug() << data;
+//    qDebug() << data;
     if (m_currentTextEdit)
     {
         m_currentTextEdit->appendText(data);
+        m_scrollArea->updateScrollPosition();
+        QCoreApplication::processEvents();
+
         auto* doc = m_currentTextEdit->document();
         int count = static_cast<int>(data.count(QChar('\n')));
 
@@ -79,18 +83,24 @@ void Workspace::onNewDataReceived(const QString &data)
                 cursor->movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
                 cursor->removeSelectedText();
                 m_currentTextEdit->updateSizeHint();
+                m_scrollArea->updateScrollPosition();
+                QCoreApplication::processEvents();
 
                 if (!m_inCodeBlock)
                 {
                     m_currentTextEdit->removeTrailingBlankLines();
                     m_currentTextEdit = new codeBlock(m_scrollArea);
                     m_scrollArea->addCustomWidget(m_currentTextEdit);
+                    m_scrollArea->updateScrollPosition();
+                    QCoreApplication::processEvents();
                     m_inCodeBlock = true;
                 }
                 else
                 {
                     m_currentTextEdit = new aiText(m_scrollArea);
                     m_scrollArea->addCustomWidget(m_currentTextEdit);
+                    m_scrollArea->updateScrollPosition();
+                    QCoreApplication::processEvents();
                     m_inCodeBlock = false;
                 }
             }
@@ -105,14 +115,20 @@ void Workspace::handleSendButtonClicked()
     {
         QString inputString = m_inputBox->toPlainText();
         if (inputString == "") return;
+
         m_currentInput = new userText(m_scrollArea);
         m_scrollArea->addCustomWidget(m_currentInput);
-        m_currentInput->updateSizeHint();
+        m_scrollArea->updateScrollPosition();
+        QCoreApplication::processEvents();
+
         m_currentInput->appendText(inputString);
+        m_scrollArea->updateScrollPosition();
+        QCoreApplication::processEvents();
 
         m_currentTextEdit = new aiText(m_scrollArea);
         m_scrollArea->addCustomWidget(m_currentTextEdit);
-        m_currentTextEdit->updateSizeHint();
+        m_scrollArea->updateScrollPosition();
+        QCoreApplication::processEvents();
 
         m_processingReponse = true;
         requestHandler->startStreaming(m_inputCount, inputString);
@@ -151,4 +167,3 @@ int Workspace::getContextCount() const
 {
     return m_ContextCount;
 }
-

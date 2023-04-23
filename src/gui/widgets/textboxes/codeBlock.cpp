@@ -23,12 +23,13 @@ codeBlock::codeBlock(QWidget *parent)
     setFont(font);
 }
 
+/*
 void codeBlock::appendText(const QString &text)
 {
     customTextEdit::appendText(text);
     if (!text.contains('\n'))
     {
-        m_syntaxHL->rehighlightBlock(m_doc->lastBlock().previous());
+//        m_syntaxHL->rehighlightBlock(m_doc->lastBlock().previous());
     }
     updateSizeHint();
-}
+}*/

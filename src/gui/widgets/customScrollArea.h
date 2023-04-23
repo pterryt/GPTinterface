@@ -3,7 +3,6 @@
 
 #include <QScrollArea>
 #include <QVBoxLayout>
-//#include <QGridLayout>
 #include <QTextDocument>
 
 class customScrollArea : public QScrollArea
@@ -11,12 +10,19 @@ class customScrollArea : public QScrollArea
 Q_OBJECT
 
 public:
+
     explicit customScrollArea(QWidget *parent = nullptr);
     void addCustomWidget(QWidget* widget);
+    void updateScrollPosition();
 
 private:
-    QVBoxLayout* m_vLayout;
-//    QGridLayout* m_gridLayout;
+
+    QVBoxLayout *m_vLayout;
+    QScrollBar *m_vScrollBar;
+
+protected:
+
+    void resizeEvent(QResizeEvent *event) override;
 };
 
 #endif // GPTINTERFACE_CUSTOMSCROLLAREA_H

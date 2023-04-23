@@ -14,7 +14,7 @@ public:
 
 public Q_SLOTS:
 
-    void appendText(const QString &text) override;
+//    void appendText(const QString &text) override;
 
 private:
     QSourceHighlite::QSourceHighliter *m_syntaxHL;
