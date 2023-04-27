@@ -10,6 +10,10 @@ InputBox::InputBox(QWidget *parent)
     setLineWrapMode(QTextEdit::WidgetWidth);
     setWordWrapMode(QTextOption::WrapAnywhere);
 
+    /* Setup font. */
+    QFont font = QFont("JetBrains Mono");
+    font.setPointSize(16);
+    setFont(font);
 
     connect(this, &QTextEdit::textChanged, this, &InputBox::adjustHeight);
 }

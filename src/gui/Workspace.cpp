@@ -1,32 +1,36 @@
 #include "Workspace.h"
+
 #include <QVBoxLayout>
-#include <iostream>
 #include <QListWidget>
 #include <QtConcurrent/QtConcurrent>
 #include <QShortcut>
 #include <QTextBlock>
+#include <QAbstractTextDocumentLayout>
+#include <QScrollBar>
+
 #include "../utils/GlobalMediator.h"
 #include "widgets/textboxes/codeBlock.h"
 #include "widgets/textboxes/userText.h"
 #include "widgets/textboxes/aiText.h"
 #include "widgets/WSTabWidget.h"
 #include "widgets/BottomToolBar.h"
-#include <QAbstractTextDocumentLayout>
-#include <QScrollBar>
 
 Workspace::Workspace(QWidget *parent) : QWidget(parent)
 {
 
+    /* Needed for calculating tokens from the InputBox on the fly. */
     encoder = new TikTokenEncoder(this);
     requestHandler = new RequestHandler(this);
+
+    /* Used to avoid simultaneous requests from one workspace. */
     m_processingReponse = false;
 
     auto *mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
+
     m_scrollArea = new customScrollArea(this);
     m_spacer = new QWidget(this);
     m_inputBox = new InputBox(this);
-    m_inputBox->setFont(m_font);
 
     mainLayout->addWidget(m_scrollArea);
     mainLayout->addWidget(m_spacer);
@@ -55,17 +59,31 @@ Workspace::Workspace(QWidget *parent) : QWidget(parent)
 
 }
 
-/**
- * This function takes data from the SSE, appends it to the current
- * customtextEdit, and updates its sizeHint.
- * */
 void Workspace::onNewDataReceived(const QString &data)
 {
 //    qDebug() << data;
+//    if (m_ttsMode && !m_inCodeBlock)
+//    {
+//        bufferString.append(data);
+//        bool check = false;
+//        for (auto &cStr : charsToCheck)
+//        {
+//            if (data.contains(cStr)) check = true;
+//        }
+//        if (check)
+//        {
+//            qDebug() << "WE GOT A CHAR";
+//            qDebug() << bufferString;
+//            bufferString = "";
+//        }
+//    }
     if (m_currentTextEdit)
     {
+        /* Append the text first incase of split code block markers '''. */
         m_currentTextEdit->appendText(data);
         m_scrollArea->updateScrollPosition();
+        /* Text boxes "bounce" during new line appends without this function
+         * call. */
         QCoreApplication::processEvents();
 
         auto* doc = m_currentTextEdit->document();
@@ -73,9 +91,12 @@ void Workspace::onNewDataReceived(const QString &data)
 
         if (count > 0)
         {
+            /* Subtract the number of new line characters to find the last
+             * block with text. */
             QTextBlock targetBlock =
                     doc->findBlockByNumber(doc->blockCount() - (1 + count));
 
+            // (4/25/23) TODO: Need something similar for end of response.
             if (targetBlock.text().contains("```"))
             {
                 QTextCursor *cursor = m_currentTextEdit->m_appendCursor;
@@ -86,6 +107,8 @@ void Workspace::onNewDataReceived(const QString &data)
                 m_scrollArea->updateScrollPosition();
                 QCoreApplication::processEvents();
 
+                /* If we're not in a code block, create one and add it to the
+                 * scrollArea. */
                 if (!m_inCodeBlock)
                 {
                     m_currentTextEdit->removeTrailingBlankLines();
@@ -95,6 +118,7 @@ void Workspace::onNewDataReceived(const QString &data)
                     QCoreApplication::processEvents();
                     m_inCodeBlock = true;
                 }
+                /* Otherwise create an aiText and add it to the scrollArea. */
                 else
                 {
                     m_currentTextEdit = new aiText(m_scrollArea);
@@ -107,7 +131,6 @@ void Workspace::onNewDataReceived(const QString &data)
         }
     }
 }
-
 
 void Workspace::handleSendButtonClicked()
 {
@@ -136,8 +159,7 @@ void Workspace::handleSendButtonClicked()
     }
 }
 
-/* Calculates the number of tokens in the input box and emits a single to
- * update the bottom bar display. */
+/* Get the token count as the user types. */
 void Workspace::handleInputChanged()
 {
     m_inputCount = encoder->encode(
@@ -149,7 +171,6 @@ void Workspace::handleInputChanged()
 void Workspace::handleContextTokensCalculated(int count)
 {
    m_ContextCount = count;
-//   qDebug() << count;
    Q_EMIT sendContextTokens(count);
 }
 

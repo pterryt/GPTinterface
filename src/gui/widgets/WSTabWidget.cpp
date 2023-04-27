@@ -3,18 +3,12 @@
 WSTabWidget::WSTabWidget(QWidget *parent)
         : QTabWidget(parent)
 {
-    addTab(new QWidget(this), QString::fromStdString("+"));
-    newTab();
-    m_currentWorkspace = qobject_cast<Workspace *>
-            (this->currentWidget());
 
+    /* INIT */
+    initialize();
+    initStyle();
 
-    /* setup font */
-    QFont font = QFont("JetBrains Mono");
-    font.setPointSize(14);
-    tabBar()->setFont(font);
-
-    // connect clicking on end tab to new tab creation
+    /* CONNECTIONS */
     connect(
             tabBar(), &QTabBar::tabBarClicked, this,
             &WSTabWidget::handleNewTabClicked);
@@ -23,6 +17,20 @@ WSTabWidget::WSTabWidget(QWidget *parent)
             this, &WSTabWidget::currentChanged, this, &WSTabWidget::handleTabChanged
             );
 
+}
+
+void WSTabWidget::initialize()
+{
+    addTab(new QWidget(this), QString::fromStdString("+"));
+    newTab();
+    m_currentWorkspace = qobject_cast<Workspace *>(this->currentWidget());
+}
+
+void WSTabWidget::initStyle()
+{
+    QFont font = QFont("JetBrains Mono");
+    font.setPointSize(10);
+    tabBar()->setFont(font);
 }
 
 void WSTabWidget::handleNewTabClicked(int index)
@@ -44,14 +52,11 @@ void WSTabWidget::handleTabChanged(int index)
 
     if (m_currentWorkspace)
     {
-        /* Change the member to a shared pointer if we send this more often. */
         Q_EMIT sendCurrentWorkspaceChanged();
 
         Q_EMIT WSTabWidget::sendTokenCounts(m_currentWorkspace->getInputCount(),
                                        m_currentWorkspace->getContextCount());
     }
-
-
 }
 
 void WSTabWidget::newTab()
@@ -66,7 +71,6 @@ void WSTabWidget::newTab()
         setCurrentIndex(count() - 2);
     }
 }
-
 
 void WSTabWidget::handleSendButtonClicked()
 {

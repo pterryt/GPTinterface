@@ -19,9 +19,14 @@ Q_SIGNALS:
     void sendButtonClick();
 
 private:
+
+    /* Pointer to the layout. */
     QVBoxLayout *m_layout;
+    /* Pointer to send button. */
     QPushButton *m_sendButton;
+    /* Pointer to the microphone button. */
     QPushButton *m_micButton;
+    /* Pointer to the appends button. */
     QPushButton *m_optionsButton;
 
 private Q_SLOTS:

@@ -17,6 +17,14 @@ find_package(Qt6 COMPONENTS
 find_package(CURL REQUIRED)
 find_package(Python3 REQUIRED COMPONENTS Development)
 
+#add_library(spdlog INTERFACE)
+
+if(NOT TARGET spdlog)
+    # Stand-alone build
+    find_package(spdlog)
+endif()
+
+#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/include/spdlog)
 include_directories(usr/include/curl)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/include)
 include_directories(${Python3_INCLUDE_DIRS})
@@ -41,7 +49,10 @@ add_executable(GPTinterface
         QSourceHighlite/qsourcehighliterthemes.cpp
         src/gui/widgets/textboxes/aiText.cpp
         src/gui/widgets/textboxes/userText.cpp
-        )
+        src/gui/widgets/LeftToolBar.cpp
+        src/devtools/logger.cpp src/devtools/logger.cpp)
+
+#target_include_directories(spdlog INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/external/include)
 
 target_link_libraries(GPTinterface
         Qt::Core
@@ -49,5 +60,6 @@ target_link_libraries(GPTinterface
         Qt::Widgets
         Qt::Network
         /usr/lib/libcurl.so
+        spdlog::spdlog_header_only
         ${Python3_LIBRARIES}
         )

@@ -10,9 +10,8 @@
         m_encoder = new TikTokenEncoder(this);
     }
 
-    void RequestHandler::addMessage(int tokens, const QString &role, const
-    QString
-    &content)
+    void RequestHandler::addMessage(
+            int tokens, const QString &role, const QString &content)
     {
         Message message;
         message.size = tokens;

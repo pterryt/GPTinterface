@@ -1,9 +1,10 @@
 #include "customTextEdit.h"
+
 #include <QShortcut>
-#include <iostream>
-#include "../RightToolBar.h"
 #include <QTextBlock>
 #include <QAbstractTextDocumentLayout>
+
+#include "../RightToolBar.h"
 
 
 customTextEdit::customTextEdit(QWidget *parent)

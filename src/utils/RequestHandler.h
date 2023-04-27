@@ -1,14 +1,13 @@
 #ifndef GPTINTERFACE_REQUESTHANDLER_H
 #define GPTINTERFACE_REQUESTHANDLER_H
-
 #define QT_NO_KEYWORDS
-#include <curl/curl.h>
 
 #include <QObject>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QtNetwork/QNetworkAccessManager>
 
+#include <curl/curl.h>
 #include "TikTokenEncoder.h"
 
 class RequestHandler : public QObject
@@ -16,9 +15,18 @@ class RequestHandler : public QObject
     Q_OBJECT
 
 public:
+
     explicit RequestHandler(QObject* parent = nullptr);
+
     void startStreaming(int tokens, const QString &input);
 
+    /**
+    * Creates a message object and appends it to the context container.
+     * @param tokens : The token cost of the message.
+     * @param role : The role ( 'assistant', 'user', etc. ) that will be given
+     * to the message.
+     * @param content : The message text.
+    */
     void addMessage(int tokens, const QString &role, const QString& content);
 
 Q_SIGNALS:

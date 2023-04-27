@@ -2,18 +2,18 @@
 #include <QShortcut>
 #include <QAction>
 
+/**
+* Holds Send button, mic button, and prefixes button.
+*/
 RightToolBar::RightToolBar(QWidget *parent)
         : QWidget(parent)
 {
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
 
-    QPixmap pixmapSend("/home/phil/_downloads/_Pictures/send-message.png");
-    QIcon sendIcon = QIcon(pixmapSend);
-//    QIcon micIcon = QIcon("../icon/mic.png");
-    QPixmap pixmapMic("/home/phil/_downloads/_Pictures/microphone.png");
-    QIcon micIcon = QIcon(pixmapMic);
-    QPixmap pixmapMenu("/home/phil/_downloads/_Pictures/menu.png");
-    QIcon settingsIcon = QIcon(pixmapMenu);
+    QIcon sendIcon = QIcon("../icon/send-message.png");
+    QIcon micIcon = QIcon("../icon/microphone.png");
+    QIcon settingsIcon = QIcon("../icon/menu.png");
+
     m_layout = new QVBoxLayout(this);
 
     m_layout->setSpacing(5);
@@ -35,11 +35,15 @@ RightToolBar::RightToolBar(QWidget *parent)
     m_sendButton->setIconSize(QSize(20,20));
 
     m_layout->setContentsMargins(0,0,0,1);
+    setLayout(m_layout);
 
     connect(m_sendButton, &QPushButton::clicked, this,
             &RightToolBar::handleSendButtonClicked);
 }
 
+/**
+* Match button height to width on resizing.
+*/
 void RightToolBar::resizeEvent(QResizeEvent *event)
 {
     QWidget::resizeEvent(event);
@@ -52,6 +56,9 @@ void RightToolBar::resizeEvent(QResizeEvent *event)
     }
 }
 
+/**
+* Emits a signal to to MainWindow -> WSTabWidget -> Workspace
+*/
 void RightToolBar::handleSendButtonClicked()
 {
     Q_EMIT sendButtonClick();

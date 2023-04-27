@@ -1,15 +1,14 @@
 #include "MainWindow.h"
 #include "ui_mainwindow.h"
 
-#include <iostream>
-
 #include <QTabBar>
 #include <QVBoxLayout>
 #include <QKeyEvent>
+
 #include "../utils/GlobalMediator.h"
 #include "widgets/RightToolBar.h"
 #include "widgets/BottomToolBar.h"
-
+#include "../devtools/logger.h"
 
 
 namespace Ui
@@ -17,7 +16,7 @@ namespace Ui
     MainWindow::MainWindow(QWidget *parent) :
             QMainWindow(parent), ui(new Ui::mainwindow)
     {
-        /* INI DESIGN */
+        /* INIT DESIGN */
         ui->setupUi(this);
 
         m_screen = QGuiApplication::primaryScreen();
@@ -42,18 +41,7 @@ namespace Ui
         iniBottomBar();
 
         /* LEFT */
-        m_leftWidget = new QWidget(m_horizontalWidget);
-        m_leftWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-        m_leftWidget->setFixedWidth(m_sideWidgetWidth);
-        m_leftWidget->setObjectName("LeftB");
-        m_leftWidget->setStyleSheet("#LeftB {"
-                                 "border-top: 1px solid #545454;"
-                                 "border-left: 1px solid #545454;"
-                                 "border-right: 1px solid #545454;"
-                                 "border-bottom: none; margin: "
-                                 "0px; padding: 0px;"
-                                 "}");
-        m_horizontalLayout->addWidget(m_leftWidget, 0, Qt::AlignBottom);
+        iniLeftBar();
 
         /* TAB WIDGET */
         m_tabWidget = new WSTabWidget(m_horizontalWidget);
@@ -65,12 +53,12 @@ namespace Ui
 
         /* FINALIZE */
         setCentralWidget(m_verticalWidget);
+        iniTheme();
 
 
+        registerCurrentWorkspace(); // (4/20/23) TODO: should be automatic..
 
-        connect(
-                this, &MainWindow::resized, this, &MainWindow::setSidebarHeight);
-
+        /* CONNNECTIONS */
         connect(
                 m_rightToolBar, &RightToolBar::sendButtonClick, m_tabWidget,
                 &WSTabWidget::handleSendButtonClicked);
@@ -89,7 +77,6 @@ namespace Ui
                 &MainWindow::registerCurrentWorkspace);
 
 
-        registerCurrentWorkspace(); // (4/20/23) TODO: unhack this
     }
 
     MainWindow::~MainWindow()
@@ -97,62 +84,103 @@ namespace Ui
         delete ui;
     }
 
-
     void MainWindow::iniBottomBar()
     {
-        int bottomWidgetHeight = static_cast<int>(m_screen->size().height()*.04);
+        /* Without a parent widget, outlining the bottom bar directly is not
+         * visible. */
+        /* Create Widgets */
         auto* btmContent = new QWidget(m_verticalWidget);
         auto* btmLayout = new QHBoxLayout(btmContent);
-        btmLayout->setContentsMargins(0,0,0,0);
         m_bottomToolBar = new BottomToolBar(btmContent);
+
+        /* Arrange Widgets */
+        m_verticalLayout->addWidget(btmContent);
         btmLayout->addWidget(m_bottomToolBar);
         btmContent->setLayout(btmLayout);
-        m_bottomToolBar->setFixedHeight(bottomWidgetHeight);
+
+        /* Styling */
+        btmLayout->setContentsMargins(0,0,0,0);
+        btmContent->setFixedHeight(m_screen->size().height()*.04);
+        /* All children are outlined if you don't style as object. */
         btmContent->setObjectName("Outer");
-        btmContent->setStyleSheet("#Outer { border:1px solid #545454; margin: "
-                                  "0px; padding: 0px;"
+        btmContent->setStyleSheet("#Outer { "
+                                  "border:1px solid #545454; "
                                   "}");
-        m_verticalLayout->addWidget(btmContent);
-        btmContent->setFixedHeight(bottomWidgetHeight);
+
         GlobalMediator::instance()->setBottomToolBar(m_bottomToolBar);
     }
 
     void MainWindow::iniRightBar()
     {
-        rtContent = new QWidget(m_horizontalWidget);
-        auto* rtLayout = new QVBoxLayout(rtContent);
-        rtLayout->setContentsMargins(5,5,5,5);
-        rtContent->setLayout(rtLayout);
-        rtContent->setObjectName("RightB");
-        rtContent->setStyleSheet("#RightB {"
-                                 "border-top: 1px solid #545454;"
-                                 "border-left: 1px solid #545454;"
-                                 "border-right: 1px solid #545454;"
-                                 "border-bottom: none; margin: "
-                                 "0px; padding: 0px;"
-         "}");
-        m_rightToolBar = new RightToolBar(rtContent);
+        /* Without a parent widget, outlining the bottom bar directly is not
+         * visible. */
+        /* Create Widgets */
+        rightContent = new QWidget(m_horizontalWidget);
+        auto* rightLayout = new QVBoxLayout(rightContent);
+        m_rightToolBar = new RightToolBar(rightContent);
+
+        /* Arrange Widgets */
+        rightContent->setLayout(rightLayout);
+        rightLayout->addWidget(m_rightToolBar);
+        m_horizontalLayout->addWidget(rightContent, 0, Qt::AlignBottom);
+
+        /* Styling */
         m_rightToolBar->setFixedWidth(m_sideWidgetWidth);
-        rtLayout->addWidget(m_rightToolBar);
-        m_horizontalLayout->addWidget(rtContent, 0, Qt::AlignBottom);
+        rightLayout->setContentsMargins(5,5,5,5);
+        /* All children are outlined if you don't style as object. */
+        rightContent->setObjectName("RightB");
+        rightContent->setStyleSheet("#RightB {"
+                                    "border-top: 1px solid #545454;"
+                                    "border-left: 1px solid #545454;"
+                                    "border-right: 1px solid #545454;"
+                                    "border-bottom: none;"
+                                   "}");
     }
 
+    void MainWindow::iniLeftBar()
+    {
+        /* Without a parent widget, outlining the bottom bar directly is not
+         * visible. */
+        /* Create Widgets */
+        leftContent = new QWidget(m_horizontalWidget);
+        auto* leftLayout = new QVBoxLayout(leftContent);
+        m_leftToolBar = new LeftToolBar(leftContent);
+
+        /* Arrange Widgets */
+        leftContent->setLayout(leftLayout);
+        leftLayout->addWidget(m_leftToolBar);
+        m_horizontalLayout->addWidget(leftContent, 0, Qt::AlignBottom);
+
+        /* Styling */
+        m_leftToolBar->setFixedWidth(m_sideWidgetWidth);
+        leftLayout->setContentsMargins(5,5,5,5);
+        /* All children are outlined if you don't style as object. */
+        leftContent->setObjectName("LeftB");
+        leftContent->setStyleSheet("#LeftB {"
+                                     "border-top: 1px solid #545454;"
+                                     "border-left: 1px solid #545454;"
+                                     "border-right: 1px solid #545454;"
+                                     "border-bottom: none;"
+                                     "}");
+
+
+    }
 
     void MainWindow::setSidebarHeight()
     {
 
         int tabHeight = m_tabWidget->tabBar()->size().height();
+        int newHeight = m_tabWidget->height() - tabHeight;
         if (tabHeight)
         {
-            rtContent->setFixedHeight(m_tabWidget->height() - tabHeight);
-            m_leftWidget->setFixedHeight(m_tabWidget->height() - tabHeight);
-            /* FIX THIS  */ //// (4/19/23) TODO: fix this tmp fix
-            m_leftWidget->setFixedWidth(rtContent->width());
+            rightContent->setFixedHeight(newHeight);
+            leftContent->setFixedHeight(newHeight);
         }
     }
 
     void MainWindow::keyPressEvent(QKeyEvent *event)
     {
+        /* Shift + Enter -> focus the inputBox. */
         if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
             if (event->modifiers() & Qt::ShiftModifier) {
                 if (m_tabWidget->getCurrentWorkspace()->getinputBox()) {
@@ -170,6 +198,7 @@ namespace Ui
         {
             unregisterCurrentWorkspace();
         }
+
         m_currentWorkspace = m_tabWidget->getCurrentWorkspace();
 
         connect(
@@ -186,4 +215,35 @@ namespace Ui
                m_bottomToolBar, &BottomToolBar::setContextTokens
                 );
     }
-} // Uik
+
+    void MainWindow::iniTheme()
+    {
+        QPalette darkPalette;
+        darkPalette.setColor(QPalette::Window, QColor(53,53,53));
+        darkPalette.setColor(QPalette::WindowText, Qt::white);
+        darkPalette.setColor(QPalette::Base, QColor(25,25,25));
+        darkPalette.setColor(QPalette::AlternateBase, QColor(53,53,53));
+        darkPalette.setColor(QPalette::ToolTipBase, Qt::white);
+        darkPalette.setColor(QPalette::ToolTipText, Qt::white);
+        darkPalette.setColor(QPalette::Text, Qt::white);
+        darkPalette.setColor(QPalette::Button, QColor(53,53,53));
+        darkPalette.setColor(QPalette::ButtonText, Qt::white);
+        darkPalette.setColor(QPalette::BrightText, Qt::red);
+        darkPalette.setColor(QPalette::Link, QColor(42, 130, 218));
+        darkPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
+        darkPalette.setColor(QPalette::HighlightedText, Qt::black);
+        QApplication::setPalette(darkPalette);
+
+        setStyleSheet("QToolTip { color: #ffffff; background-color: "
+                         "#2a82da; "
+                          "border: 1px solid black; font-size: 22px}");
+    }
+
+    /* Resize the sidebars, which are based on the tabwidget's height. */
+    void MainWindow::resizeEvent(QResizeEvent *event)
+    {
+        QMainWindow::resizeEvent(event);
+        setSidebarHeight();
+    }
+
+} // Ui
