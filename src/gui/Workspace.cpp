@@ -7,6 +7,7 @@
 #include <QTextBlock>
 #include <QAbstractTextDocumentLayout>
 #include <QScrollBar>
+#include <fstream>
 
 #include "../utils/GlobalMediator.h"
 #include "widgets/textboxes/codeBlock.h"
@@ -14,10 +15,12 @@
 #include "widgets/textboxes/aiText.h"
 #include "widgets/WSTabWidget.h"
 #include "widgets/BottomToolBar.h"
+#include "../utils/PollyUtility.h"
+
 
 Workspace::Workspace(QWidget *parent) : QWidget(parent)
 {
-
+    polly.startProcessing();
     /* Needed for calculating tokens from the InputBox on the fly. */
     encoder = new TikTokenEncoder(this);
     requestHandler = new RequestHandler(this);
@@ -46,7 +49,7 @@ Workspace::Workspace(QWidget *parent) : QWidget(parent)
 
     connect(
             requestHandler, &RequestHandler::responseFinshed, this,
-            [this]()-> void {m_processingReponse = false;});
+            &Workspace::handleResponseFinished);
 
     connect(
             m_inputBox, &InputBox::textChanged, this,
@@ -56,27 +59,23 @@ Workspace::Workspace(QWidget *parent) : QWidget(parent)
             requestHandler, &RequestHandler::sendContextTokensCalculated, this,
             &Workspace::handleContextTokensCalculated
             );
+}
 
+Workspace::~Workspace()
+{
 }
 
 void Workspace::onNewDataReceived(const QString &data)
 {
 //    qDebug() << data;
-//    if (m_ttsMode && !m_inCodeBlock)
-//    {
-//        bufferString.append(data);
-//        bool check = false;
-//        for (auto &cStr : charsToCheck)
-//        {
-//            if (data.contains(cStr)) check = true;
-//        }
-//        if (check)
-//        {
-//            qDebug() << "WE GOT A CHAR";
-//            qDebug() << bufferString;
-//            bufferString = "";
-//        }
-//    }
+    if (m_ttsMode && !m_inCodeBlock)
+    {
+        bufferString.append(data);
+        if (bufferString.length() >= 75)
+        {
+            flushBuffer();
+        }
+    }
     if (m_currentTextEdit)
     {
         /* Append the text first incase of split code block markers '''. */
@@ -187,4 +186,19 @@ int Workspace::getInputCount() const
 int Workspace::getContextCount() const
 {
     return m_ContextCount;
+}
+
+void Workspace::flushBuffer()
+{
+    polly.addText(bufferString);
+    bufferString = "";
+}
+
+void Workspace::handleResponseFinished()
+{
+    m_processingReponse = false;
+    if (!bufferString.isEmpty())
+    {
+        flushBuffer();
+    }
 }

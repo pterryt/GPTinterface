@@ -4,7 +4,10 @@ GlobalMediator::GlobalMediator(QObject *parent)
         : QObject(parent)
 {
     m_bottomToolBar = nullptr;
+    m_tabWidget = nullptr;
     m_rightToolBar = nullptr;
+    m_mediaPlayer = nullptr;
+    m_espEncoder = nullptr;
 }
 
 GlobalMediator *GlobalMediator::instance()
@@ -36,6 +39,12 @@ GlobalMediator *GlobalMediator::setWSTabWidget(WSTabWidget *wstw)
     return m_mediator;
 }
 
+GlobalMediator *GlobalMediator::setEspnet2Encoder(Espnet2Encoder *espEnc)
+{
+    m_espEncoder = espEnc;
+    return m_mediator;
+}
+
 RightToolBar *GlobalMediator::getRightToolBar()
 {
     return m_rightToolBar;
@@ -49,4 +58,21 @@ BottomToolBar *GlobalMediator::getBottomToolBar()
 WSTabWidget *GlobalMediator::getWSTabWidget()
 {
     return m_tabWidget;
+}
+
+
+Espnet2Encoder *GlobalMediator::getEspnet2Encoder()
+{
+    return m_espEncoder;
+}
+
+GlobalMediator *GlobalMediator::setMediaPlayer(MediaQueue *mp)
+{
+    m_mediaPlayer = mp;
+    return m_mediator;
+}
+
+MediaQueue *GlobalMediator::getMediaPlayer()
+{
+    return m_mediaPlayer;
 }

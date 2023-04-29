@@ -14,6 +14,7 @@
 #include "widgets/LeftToolBar.h"
 #include "widgets/WSTabWidget.h"
 #include "widgets/BottomToolBar.h"
+#include "../utils/Espnet2Encoder.h"
 
 namespace Ui
 {
@@ -98,6 +99,8 @@ namespace Ui
         /* Sets the left and right toolbars to match the height of the
          * tabwidget workspace by subtracting the tabbar height. */
         void setSidebarHeight();
+        
+
     };
 } // Ui
 

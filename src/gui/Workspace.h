@@ -11,10 +11,12 @@
 #include <QTabWidget>
 #include <QFutureWatcher>
 
+#include "../utils/MediaQueue.h"
 #include "widgets/textboxes/customTextEdit.h"
 #include "widgets/customScrollArea.h"
 #include "widgets/InputBox.h"
 #include "../utils/RequestHandler.h"
+#include "../utils/PollyUtility.h"
 
 /**
 * Holds output box, input box, and a spacer. Generated on a per tab basis.
@@ -26,6 +28,7 @@ Q_OBJECT
 public:
 
     explicit Workspace(QWidget *parent = nullptr);
+    ~Workspace();
 
     /**
     * Retrieve the child InputBox.
@@ -73,13 +76,12 @@ Q_SIGNALS:
 
 private:
 
+    /* Don't start appending to textEdit before TTS has begun. */
+    bool firstPass = true;
     /* Returns true if tts mode is on. */
     bool m_ttsMode = true;
     /* Holds text bettween pauses when in TTS mode.*/
     QString bufferString;
-    /* Characters that reset the bufferString */
-    QVector<QString> charsToCheck =
-            { QString("."), QString(","), QString("。"), QString("、") };
     /* Returns true if currently processing an API request. */
     bool m_processingReponse;
     /* Returns true if currently appending text to a codeBlock. */
@@ -104,6 +106,9 @@ private:
     // (4/25/23) TODO: Should probably be shared.
     QPointer<TikTokenEncoder> encoder;
 
+    PollyUtility polly;
+
+
 private Q_SLOTS:
 /**
  * Slot that takes data from the SSE, appends it to the current
@@ -112,6 +117,17 @@ private Q_SLOTS:
  * generally ranging from a few characters to a single word.
  * */
     void onNewDataReceived(const QString& data);
+
+    /**
+    * This function flushes the buffer and requests the speech from the
+     * remaining text.
+    */
+    void flushBuffer();
+
+    /**
+    * Flush buffer and reenable send.
+    */
+    void handleResponseFinished();
 
 
 };

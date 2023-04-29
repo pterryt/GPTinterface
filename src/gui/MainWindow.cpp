@@ -52,12 +52,11 @@ namespace Ui
         iniRightBar();
 
         /* FINALIZE */
+
         setCentralWidget(m_verticalWidget);
         iniTheme();
 
-
         registerCurrentWorkspace(); // (4/20/23) TODO: should be automatic..
-
         /* CONNNECTIONS */
         connect(
                 m_rightToolBar, &RightToolBar::sendButtonClick, m_tabWidget,

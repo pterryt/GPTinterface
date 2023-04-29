@@ -39,7 +39,7 @@
         QJsonObject requestBody;
         requestBody["model"] = "gpt-3.5-turbo";
         requestBody["messages"] = m_messages;
-        requestBody["max_tokens"] = 500;
+        requestBody["max_tokens"] = 2000;
         requestBody["temperature"] = 0;
         requestBody["stream"] = true;
 

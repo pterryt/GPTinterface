@@ -4,9 +4,13 @@
 #include <QApplication>
 
 #include <spdlog/sinks/stdout_color_sinks.h>
+#include <aws/polly/model/SynthesizeSpeechRequest.h>
+#include <fstream>
 #include "utils/GlobalMediator.h"
 #include "devtools/ToolTipEventFilter.h"
 #include "devtools/logger.h"
+#include "utils/PollyUtility.h"
+#include "utils/MediaQueue.h"
 
 /* Add tooltips - to all objects in the gui - that display class, parent class,
  * and grandparent class. */
@@ -28,6 +32,8 @@ int main(int argc, char *argv[])
     QApplication App(argc, argv);
     Ui::MainWindow mainWindow;
 
+    Aws::SDKOptions options;
+    Aws::InitAPI(options);
 
     if (debugMode)
     {
@@ -39,6 +45,6 @@ int main(int argc, char *argv[])
     int ret = App.exec();
 
     delete GlobalMediator::instance();
-
+    Aws::ShutdownAPI(options);
     return ret;
 }

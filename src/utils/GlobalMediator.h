@@ -6,6 +6,8 @@
 class RightToolBar;
 class BottomToolBar;
 class WSTabWidget;
+class Espnet2Encoder;
+class MediaQueue;
 
 class GlobalMediator : public QObject
 {
@@ -22,10 +24,14 @@ public:
     GlobalMediator* setRightToolBar(RightToolBar* rtb);
     GlobalMediator* setBottomToolBar(BottomToolBar* btb);
     GlobalMediator* setWSTabWidget(WSTabWidget* wstw);
+    GlobalMediator* setMediaPlayer(MediaQueue* mp);
+    GlobalMediator* setEspnet2Encoder(Espnet2Encoder* espEnc);
 
     RightToolBar* getRightToolBar();
     BottomToolBar* getBottomToolBar();
     WSTabWidget* getWSTabWidget();
+    MediaQueue* getMediaPlayer();
+    Espnet2Encoder* getEspnet2Encoder();
 
     Q_SIGNALS:
     void sendInputTokenCount(int count);
@@ -40,6 +46,8 @@ private:
     RightToolBar *m_rightToolBar;
     BottomToolBar *m_bottomToolBar;
     WSTabWidget *m_tabWidget;
+    MediaQueue *m_mediaPlayer;
+    Espnet2Encoder *m_espEncoder;
 
 
 
