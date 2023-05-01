@@ -1,13 +1,9 @@
 #include "PollyUtility.h"
 
 #include <aws/polly/model/SynthesizeSpeechRequest.h>
-#include <aws/polly/model/SynthesizeSpeechResult.h>
-#include <aws/core/utils/Outcome.h>
 #include <iostream>
 #include <fstream>
 #include <mutex>
-#include "../devtools/logger.h"
-
 
 PollyUtility::PollyUtility()
 {
@@ -26,9 +22,7 @@ bool PollyUtility::synthesizeSpeech(const int index, const QString &text)
     std::string textString = text.toStdString();
     bool isEnglish = checkLanguage(textString);
 
-    std::string outputFile = "audio_clips/clip" + std::to_string(index) + ""
-                                                                          ".mp3";
-//    std::string outputFile2 = "audio_clips/" + textString + ".mp3";
+    std::string outputFile = "audio_clips/clip" + std::to_string(index) + ".mp3";
     auto url = QUrl::fromLocalFile(QString::fromStdString(outputFile));
 
     Aws::Polly::Model::SynthesizeSpeechRequest request;
@@ -46,19 +40,21 @@ bool PollyUtility::synthesizeSpeech(const int index, const QString &text)
     {
         auto &result = outcome.GetResult();
         auto &audioStream = result.GetAudioStream();
+
         std::ofstream output(outputFile, std::ios::out | std::ios::binary);
+
         output << audioStream.rdbuf();
-        std::cout << "Audio saved to " << outputFile << std::endl;
-        std::mutex mu;
+
         std::unique_lock<std::mutex> lock(m_mediaQueue->m_queueMutex);
         m_Cv.wait(lock, [index, this]()
         {
             return index == m_mediaQueue->getCurrentIndex() + 1;
         });
-        giLog::consoleLog->debug("Queue index: {}", m_mediaQueue->getCurrentIndex());
-        giLog::consoleLog->debug("Strings index: {}",index);
+
         m_mediaQueue->m_mediaQueue->enqueue(url);
+
         QMetaObject::invokeMethod(m_mediaQueue, &MediaQueue::handleNewMedia);
+
         m_Cv.notify_all();
         return true;
     }
@@ -114,49 +110,3 @@ bool PollyUtility::checkLanguage(const std::string &input)
     return is_english;
 }
 
-
-
-//
-//void PollyUtility::addText(const QString &text)
-//{
-//    std::unique_lock<std::mutex> lock(m_textsMutex);
-//    m_texts.push_back(text);
-//    m_textsCv.notify_one();
-//}
-//
-//void PollyUtility::startProcessing()
-//{
-//    m_stopProcessing = false;
-//    std::thread(&PollyUtility::processTexts, this).detach();
-//}
-//
-//void PollyUtility::stopProcessing()
-//{
-//    m_stopProcessing = true;
-//    m_textsCv.notify_one();
-//}
-
-//void PollyUtility::processTexts()
-//{
-//    while (!m_stopProcessing)
-//    {
-//        QString text;
-//        {
-//            std::unique_lock<std::mutex> lock(m_textsMutex);
-//            m_textsCv.wait(lock, [this]()
-//                           {
-//                               return !m_texts.empty() || m_stopProcessing;
-//                           });
-//
-//            if (m_stopProcessing)
-//            {
-//                break;
-//            }
-//
-//            text = m_texts.front();
-//            m_texts.pop_front();
-//        }
-//
-//        synthesizeSpeech(text);
-//    }
-//}

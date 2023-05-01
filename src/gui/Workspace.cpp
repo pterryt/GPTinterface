@@ -70,7 +70,9 @@ void Workspace::onNewDataReceived(const QString &data)
     if (m_ttsMode && !m_inCodeBlock)
     {
         bufferString.append(data);
-        if (bufferString.length() >= 75)
+//        if (bufferString.length() >= 75)
+        if (bufferString.contains(QChar('.')) || bufferString.contains
+        (QString("。")))
         {
             flushBuffer();
         }
