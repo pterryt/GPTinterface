@@ -64,7 +64,7 @@ add_executable(GPTinterface
         src/gui/widgets/textboxes/userText.cpp
         src/gui/widgets/LeftToolBar.cpp
         src/devtools/logger.cpp
-        src/utils/Espnet2Encoder.cpp
+#        src/utils/Espnet2Encoder.cpp
         src/utils/MediaQueue.cpp
         src/utils/PollyUtility.cpp)
 

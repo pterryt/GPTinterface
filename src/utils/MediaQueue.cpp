@@ -1,7 +1,10 @@
 #include "MediaQueue.h"
+
 #include <QAudioOutput>
 #include <QMediaDevices>
 #include <QAudioDevice>
+#include <thread>
+
 #include <iostream>
 
 MediaQueue::MediaQueue(QObject *parent)
@@ -10,19 +13,25 @@ MediaQueue::MediaQueue(QObject *parent)
     QAudioDevice audioDevice = QMediaDevices::defaultAudioOutput();
     m_mediaPlayer->setAudioOutput(new QAudioOutput(audioDevice, this));
     m_mediaPlayer->audioOutput()->setVolume(100);
-    connect(m_mediaPlayer, &QMediaPlayer::playbackStateChanged, this, &MediaQueue::handlePlaybackStateChanged);
+    m_mediaQueue = new QQueue<QUrl>();
+
+//    connect(m_mediaPlayer, &QMediaPlayer::playbackStateChanged, this, &MediaQueue::handlePlaybackStateChanged);
+
+    connect(m_mediaPlayer, &QMediaPlayer::mediaStatusChanged, this,
+            &MediaQueue::handleMediaStatusChanged);
+
+    connect(this, &MediaQueue::handleNewMedia, this, &MediaQueue::addMedia);
 }
 
-void MediaQueue::addMedia(const QUrl &url)
+void MediaQueue::addMedia()
 {
-    std::unique_lock<std::mutex> lock(m_queueMutex);
-    m_mediaQueue.append(url);
-    m_queueCv.notify_one();
+    playNext();
+    m_currentIndex ++;
 }
 
 void MediaQueue::clearQueue()
 {
-    m_mediaQueue.clear();
+    m_mediaQueue->clear();
     m_currentIndex = -1;
 }
 
@@ -33,19 +42,31 @@ void MediaQueue::playNext()
         return;
     }
 
-    std::unique_lock<std::mutex> lock(m_queueMutex);
-    m_queueCv.wait(lock, [this] { return !m_mediaQueue.isEmpty(); });
-
-    m_currentIndex = (m_currentIndex + 1) % m_mediaQueue.size();
-    m_mediaPlayer->setSource(m_mediaQueue[m_currentIndex]);
-    m_mediaPlayer->play();
+    if (!m_mediaQueue->isEmpty())
+    {
+        qDebug() << m_mediaQueue->front();
+        m_mediaPlayer->setSource(m_mediaQueue->dequeue());
+        m_mediaPlayer->play();
+    }
 }
 
 void MediaQueue::handleMediaStatusChanged(QMediaPlayer::MediaStatus status)
 {
-    if (status == QMediaPlayer::EndOfMedia) {
+    if (status == QMediaPlayer::EndOfMedia)
+    {
         playNext();
     }
+}
+
+int MediaQueue::getCurrentIndex() const
+{
+    return m_currentIndex;
+}
+
+MediaQueue::~MediaQueue()
+{
+    delete m_mediaQueue;
+    m_mediaQueue = nullptr;
 }
 
 void MediaQueue::handlePlaybackStateChanged(QMediaPlayer::PlaybackState state)

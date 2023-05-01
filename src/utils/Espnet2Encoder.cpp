@@ -129,7 +129,7 @@ void Espnet2Encoder::textToAudio(const QString &input)
         return;
     }
 
-    m_mediaQueue->addMedia(QUrl::fromLocalFile(QString::fromStdString(output_file_name)));
+//    m_mediaQueue->addMedia(QUrl::fromLocalFile(QString::fromStdString(output_file_name)));
     m_mediaQueue->playNext();
 //    qDebug() << m_mediaQueue->m_mediaPlayer->isPlaying();
     /* Deallocate resources */

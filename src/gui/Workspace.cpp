@@ -7,7 +7,7 @@
 #include <QTextBlock>
 #include <QAbstractTextDocumentLayout>
 #include <QScrollBar>
-#include <fstream>
+#include <QThread>
 
 #include "../utils/GlobalMediator.h"
 #include "widgets/textboxes/codeBlock.h"
@@ -15,12 +15,11 @@
 #include "widgets/textboxes/aiText.h"
 #include "widgets/WSTabWidget.h"
 #include "widgets/BottomToolBar.h"
-#include "../utils/PollyUtility.h"
+#include <thread>
 
 
 Workspace::Workspace(QWidget *parent) : QWidget(parent)
 {
-    polly.startProcessing();
     /* Needed for calculating tokens from the InputBox on the fly. */
     encoder = new TikTokenEncoder(this);
     requestHandler = new RequestHandler(this);
@@ -78,7 +77,7 @@ void Workspace::onNewDataReceived(const QString &data)
     }
     if (m_currentTextEdit)
     {
-        /* Append the text first incase of split code block markers '''. */
+        /* Append the text first in case of split code block markers '''. */
         m_currentTextEdit->appendText(data);
         m_scrollArea->updateScrollPosition();
         /* Text boxes "bounce" during new line appends without this function
@@ -190,8 +189,11 @@ int Workspace::getContextCount() const
 
 void Workspace::flushBuffer()
 {
-    polly.addText(bufferString);
+    std::thread thread(&PollyUtility::synthesizeSpeech, &polly,
+                       audioClipIndex, bufferString);
+    thread.detach();
     bufferString = "";
+    audioClipIndex ++;
 }
 
 void Workspace::handleResponseFinished()

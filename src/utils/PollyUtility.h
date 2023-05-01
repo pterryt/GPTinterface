@@ -8,6 +8,8 @@
 #include <aws/core/auth/AWSCredentialsProvider.h>
 #include "MediaQueue.h"
 #include <QString>
+#include <condition_variable>
+#include <QWaitCondition>
 
 class PollyUtility
 {
@@ -17,22 +19,15 @@ public:
 
     ~PollyUtility();
 
-    bool synthesizeSpeech(const QString &text);
+    bool synthesizeSpeech(int index, const QString &text);
 
-    void addText(const QString &text);
-    void startProcessing();
-    void stopProcessing();
 
 private:
 
     MediaQueue *m_mediaQueue;
     bool checkLanguage(const std::string &input);
-    void processTexts();
+    std::condition_variable m_Cv;
 
-    std::deque<QString> m_texts;
-    std::mutex m_textsMutex;
-    std::condition_variable m_textsCv;
-    std::atomic<bool> m_stopProcessing{false};
 };
 
 #endif //GPTINTERFACE_POLLYUTILITY_H

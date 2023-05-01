@@ -108,6 +108,8 @@ private:
 
     PollyUtility polly;
 
+    int audioClipIndex = 0;
+
 
 private Q_SLOTS:
 /**

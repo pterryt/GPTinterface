@@ -6,7 +6,7 @@ GlobalMediator::GlobalMediator(QObject *parent)
     m_bottomToolBar = nullptr;
     m_tabWidget = nullptr;
     m_rightToolBar = nullptr;
-    m_mediaPlayer = nullptr;
+//    m_mediaPlayer = nullptr;
     m_espEncoder = nullptr;
 }
 
@@ -66,13 +66,13 @@ Espnet2Encoder *GlobalMediator::getEspnet2Encoder()
     return m_espEncoder;
 }
 
-GlobalMediator *GlobalMediator::setMediaPlayer(MediaQueue *mp)
-{
-    m_mediaPlayer = mp;
-    return m_mediator;
-}
-
-MediaQueue *GlobalMediator::getMediaPlayer()
-{
-    return m_mediaPlayer;
-}
+//GlobalMediator *GlobalMediator::setMediaPlayer(MediaQueue *mp)
+//{
+//    m_mediaPlayer = mp;
+//    return m_mediator;
+//}
+//
+//MediaQueue *GlobalMediator::getMediaPlayer()
+//{
+//    return m_mediaPlayer;
+//}
