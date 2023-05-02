@@ -57,6 +57,7 @@ private:
     QString m_fullResponse;
     TikTokenEncoder *m_encoder;
     const int TOKEN_LIMIT = 4000; // hard limit 4096
+    int calcResponseLimit();
 };
 
 

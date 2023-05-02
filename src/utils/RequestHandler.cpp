@@ -27,6 +27,8 @@
     {
         addMessage(tokens, "user", input);
 
+        int limit = calcResponseLimit();
+
         QUrl url("https://api.openai.com/v1/chat/completions");
         QNetworkRequest request(url);
         QByteArray openaiApiKey = qgetenv("OPENAI_API_KEY");
@@ -39,7 +41,7 @@
         QJsonObject requestBody;
         requestBody["model"] = "gpt-3.5-turbo";
         requestBody["messages"] = m_messages;
-        requestBody["max_tokens"] = 2000;
+        requestBody["max_tokens"] = limit;
         requestBody["temperature"] = 0;
         requestBody["stream"] = true;
 
@@ -102,5 +104,17 @@ void RequestHandler::onFinished() {
         Q_EMIT responseFinshed();
         reply->deleteLater();
     }
+}
+
+int RequestHandler::calcResponseLimit()
+{
+    int limit = TOKEN_LIMIT - contextContainer.size;
+    while (TOKEN_LIMIT - contextContainer.size < 500)
+    {
+        contextContainer.size -= contextContainer.currentContext.front().size;
+        contextContainer.currentContext.pop_front();
+        Q_EMIT sendContextTokensCalculated(contextContainer.size);
+    }
+    return limit;
 }
 

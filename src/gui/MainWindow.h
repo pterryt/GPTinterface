@@ -51,6 +51,9 @@ namespace Ui
 
         void keyPressEvent(QKeyEvent *event) override;
 
+    private Q_SLOTS:
+        void on_actionExit_triggered();
+
     private:
 
         Ui::mainwindow *ui{};

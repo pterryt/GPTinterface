@@ -46,8 +46,7 @@ bool PollyUtility::synthesizeSpeech(const int index, const QString &text)
         output << audioStream.rdbuf();
 
         std::unique_lock<std::mutex> lock(m_mediaQueue->m_queueMutex);
-        m_Cv.wait(lock, [index, this]()
-        {
+        m_Cv.wait(lock, [index, this]() {
             return index == m_mediaQueue->getCurrentIndex() + 1;
         });
 
@@ -76,7 +75,8 @@ bool PollyUtility::checkLanguage(const std::string &input)
     {
         return false;  // Japanese
     }
-    else if ((unicode_value >= 0x0041 && unicode_value <= 0x005A) || (unicode_value >= 0x0061 && unicode_value <= 0x007A))
+    else if ((unicode_value >= 0x0041 && unicode_value <= 0x005A) ||
+             (unicode_value >= 0x0061 && unicode_value <= 0x007A))
     {
         is_english = true;
     }
@@ -90,7 +90,8 @@ bool PollyUtility::checkLanguage(const std::string &input)
         {
             return false;  // Japanese
         }
-        else if ((unicode_value >= 0x0041 && unicode_value <= 0x005A) || (unicode_value >= 0x0061 && unicode_value <= 0x007A))
+        else if ((unicode_value >= 0x0041 && unicode_value <= 0x005A) ||
+                 (unicode_value >= 0x0061 && unicode_value <= 0x007A))
         {
             if (is_english)
             {

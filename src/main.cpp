@@ -28,7 +28,6 @@ int main(int argc, char *argv[])
     QApplication App(argc, argv);
     Ui::MainWindow mainWindow;
 
-    QObject::connect(&mainWindow, &QMainWindow::destroyed, &App, &QApplication::quit);
 
     Aws::SDKOptions options;
     Aws::InitAPI(options);

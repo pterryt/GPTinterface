@@ -12,7 +12,7 @@ InputBox::InputBox(QWidget *parent)
 
     /* Setup font. */
     QFont font = QFont("JetBrains Mono");
-    font.setPointSize(16);
+    font.setPointSize(12);
     setFont(font);
 
     connect(this, &QTextEdit::textChanged, this, &InputBox::adjustHeight);

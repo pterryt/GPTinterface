@@ -64,18 +64,19 @@ namespace Ui
 
         connect(
                 m_tabWidget, &WSTabWidget::sendTokenCounts, m_bottomToolBar,
-                &BottomToolBar::handleTabChanged
-        );
+                &BottomToolBar::handleTabChanged);
 
         connect(
                 GlobalMediator::instance(), &GlobalMediator::sendInputTokenCount,
-                m_bottomToolBar, &BottomToolBar::setInputTokens
-        );
+                m_bottomToolBar, &BottomToolBar::setInputTokens);
 
-        connect(m_tabWidget, &WSTabWidget::sendCurrentWorkspaceChanged, this,
+        connect(
+                m_tabWidget, &WSTabWidget::sendCurrentWorkspaceChanged, this,
                 &MainWindow::registerCurrentWorkspace);
 
-
+        connect(
+                this, &MainWindow::destroyed, this, [](){ QApplication::quit(); }
+                );
     }
 
     MainWindow::~MainWindow()
@@ -244,5 +245,11 @@ namespace Ui
         QMainWindow::resizeEvent(event);
         setSidebarHeight();
     }
+
+
+void MainWindow::on_actionExit_triggered()
+{
+        QApplication::quit();
+}
 
 } // Ui
