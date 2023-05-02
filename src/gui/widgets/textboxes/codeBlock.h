@@ -10,7 +10,7 @@ class codeBlock : public customTextEdit
 
 public:
 
-    explicit codeBlock(QWidget *parent = nullptr);
+    explicit codeBlock(const int wsIndex, QWidget *parent = nullptr);
 
 public Q_SLOTS:
 

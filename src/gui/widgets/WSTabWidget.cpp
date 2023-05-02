@@ -20,9 +20,7 @@ WSTabWidget::WSTabWidget(QWidget *parent)
             this, &WSTabWidget::currentChanged, this, &WSTabWidget::handleTabChanged
     );
     connect(
-            m_renameLineEdit, &RenameLineEdit::sendEnterPressed, this, [this]() {
-                setTabText(m_lastIndexEdit, m_renameLineEdit->text());
-            }
+            m_renameLineEdit, &RenameLineEdit::sendEnterPressed, this, &WSTabWidget::handleRename
     );
 
 }
@@ -73,7 +71,8 @@ void WSTabWidget::newTab()
     if ((count() - 1) < MAX_TABS)
     {
         QTabBar *tabBar = this->tabBar();
-        auto *x = new Workspace;
+        auto *x = new Workspace(m_wsCount, this);
+        m_wsCount++;
         m_currentWorkspace = x;
         addTab(x, QString::number(count()));
         tabBar->moveTab((count() - 1), (count() - 2));
@@ -109,6 +108,12 @@ void WSTabWidget::handleTabDoubleClicked(int index)
     m_renameLineEdit->show();
     m_renameLineEdit->setFocus();
     m_renameLineEdit->selectAll();
+}
+
+void WSTabWidget::handleRename()
+{
+    setTabText(m_lastIndexEdit, m_renameLineEdit->text());
+    qobject_cast<Workspace *>(widget(0))->setName(m_renameLineEdit->text());
 }
 
 

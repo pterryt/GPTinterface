@@ -19,7 +19,7 @@ public:
 
     ~PollyUtility();
 
-    bool synthesizeSpeech(int index, const QString &text);
+    bool synthesizeSpeech(int wsIndex, int containerIndex, int stringIndex, const QString &text);
 
 
 private:

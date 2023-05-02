@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <mutex>
+#include <QDir>
 
 PollyUtility::PollyUtility()
 {
@@ -16,14 +17,25 @@ PollyUtility::~PollyUtility()
     m_mediaQueue = nullptr;
 }
 
-bool PollyUtility::synthesizeSpeech(const int index, const QString &text)
+bool PollyUtility::synthesizeSpeech(const int wsIndex, const int containerIndex,
+                                    const int stringIndex, const QString &text)
 {
     Aws::Polly::PollyClient pollyClient_;
     std::string textString = text.toStdString();
     bool isEnglish = checkLanguage(textString);
 
-    std::string outputFile = "audio_clips/clip" + std::to_string(index) + ".mp3";
-    auto url = QUrl::fromLocalFile(QString::fromStdString(outputFile));
+    QString dirname =
+            "audio_clips/ws_" + QString::number(wsIndex) +
+            "/cte_" + QString::number(containerIndex) + "/";
+    QDir dir;
+
+    if (!dir.exists(dirname))
+    {
+        dir.mkdir(dirname);
+    }
+
+    QString outputFile = dirname + "clip" + QString::number(stringIndex) + ".mp3";
+    auto url = QUrl::fromLocalFile(outputFile);
 
     Aws::Polly::Model::SynthesizeSpeechRequest request;
     request.SetOutputFormat(Aws::Polly::Model::OutputFormat::mp3);
@@ -36,18 +48,19 @@ bool PollyUtility::synthesizeSpeech(const int index, const QString &text)
 
     auto outcome = pollyClient_.SynthesizeSpeech(request);
 
+    // (5/2/23) TODO: understand this code -> can Qobjects be used?
     if (outcome.IsSuccess())
     {
         auto &result = outcome.GetResult();
         auto &audioStream = result.GetAudioStream();
 
-        std::ofstream output(outputFile, std::ios::out | std::ios::binary);
+        std::ofstream output(outputFile.toStdString(), std::ios::out | std::ios::binary);
 
         output << audioStream.rdbuf();
 
         std::unique_lock<std::mutex> lock(m_mediaQueue->m_queueMutex);
-        m_Cv.wait(lock, [index, this]() {
-            return index == m_mediaQueue->getCurrentIndex() + 1;
+        m_Cv.wait(lock, [stringIndex, this]() {
+            return stringIndex == m_mediaQueue->getCurrentIndex() + 1;
         });
 
         m_mediaQueue->m_mediaQueue->enqueue(url);

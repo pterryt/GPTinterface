@@ -4,6 +4,7 @@
 #include <QScrollArea>
 #include <QVBoxLayout>
 #include <QTextDocument>
+#include "textboxes/customTextEdit.h"
 
 class customScrollArea : public QScrollArea
 {
@@ -12,8 +13,9 @@ Q_OBJECT
 public:
 
     explicit customScrollArea(QWidget *parent = nullptr);
-    void addCustomWidget(QWidget* widget);
+    void addCustomWidget(customTextEdit* widget);
     void updateScrollPosition();
+    int textBoxCount = 0;
 
 private:
 

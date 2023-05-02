@@ -1,8 +1,8 @@
 #include "aiText.h"
 #include <QTextFrame>
 
-aiText::aiText(QWidget *parent)
-        : customTextEdit(parent)
+aiText::aiText(const int wsIndex, QWidget *parent)
+        : customTextEdit(wsIndex, parent)
 {
     setStyleSheet("background-color: black;");
 

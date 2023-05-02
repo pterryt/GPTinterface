@@ -18,7 +18,7 @@
 #include <thread>
 
 
-Workspace::Workspace(QWidget *parent) : QWidget(parent)
+Workspace::Workspace(const int number, QWidget *parent) : QWidget(parent), Number(number)
 {
     /* Needed for calculating tokens from the InputBox on the fly. */
     encoder = new TikTokenEncoder(this);
@@ -37,6 +37,16 @@ Workspace::Workspace(QWidget *parent) : QWidget(parent)
     mainLayout->addWidget(m_scrollArea);
     mainLayout->addWidget(m_spacer);
     mainLayout->addWidget(m_inputBox);
+
+    QString dirname =
+            "audio_clips/ws_" + QString::number(Number);
+    QDir dir;
+
+    if (!dir.exists(dirname))
+    {
+        dir.mkdir(dirname);
+    }
+
 
     connect(
             m_inputBox, &InputBox::enterKeyPressed, this,
@@ -112,7 +122,7 @@ void Workspace::onNewDataReceived(const QString &data)
                 if (!m_inCodeBlock)
                 {
                     m_currentTextEdit->removeTrailingBlankLines();
-                    m_currentTextEdit = new codeBlock(m_scrollArea);
+                    m_currentTextEdit = new codeBlock(Number, m_scrollArea);
                     m_scrollArea->addCustomWidget(m_currentTextEdit);
                     m_scrollArea->updateScrollPosition();
                     QCoreApplication::processEvents();
@@ -121,7 +131,7 @@ void Workspace::onNewDataReceived(const QString &data)
                 /* Otherwise create an aiText and add it to the scrollArea. */
                 else
                 {
-                    m_currentTextEdit = new aiText(m_scrollArea);
+                    m_currentTextEdit = new aiText(Number, m_scrollArea);
                     m_scrollArea->addCustomWidget(m_currentTextEdit);
                     m_scrollArea->updateScrollPosition();
                     QCoreApplication::processEvents();
@@ -139,7 +149,7 @@ void Workspace::handleSendButtonClicked()
         QString inputString = m_inputBox->toPlainText();
         if (inputString == "") return;
 
-        m_currentInput = new userText(m_scrollArea);
+        m_currentInput = new userText(Number, m_scrollArea);
         m_scrollArea->addCustomWidget(m_currentInput);
         m_scrollArea->updateScrollPosition();
         QCoreApplication::processEvents();
@@ -148,7 +158,7 @@ void Workspace::handleSendButtonClicked()
         m_scrollArea->updateScrollPosition();
         QCoreApplication::processEvents();
 
-        m_currentTextEdit = new aiText(m_scrollArea);
+        m_currentTextEdit = new aiText(Number, m_scrollArea);
         m_scrollArea->addCustomWidget(m_currentTextEdit);
         m_scrollArea->updateScrollPosition();
         QCoreApplication::processEvents();
@@ -191,7 +201,7 @@ int Workspace::getContextCount() const
 
 void Workspace::flushBuffer()
 {
-    std::thread thread(&PollyUtility::synthesizeSpeech, &polly,
+    std::thread thread(&PollyUtility::synthesizeSpeech, &polly, Number, m_currentTextEdit->convoIndex,
                        audioClipIndex, bufferString);
     thread.detach();
     bufferString = "";
@@ -206,3 +216,19 @@ void Workspace::handleResponseFinished()
         flushBuffer();
     }
 }
+
+const QString &Workspace::getName() const
+{
+    return Name;
+}
+
+void Workspace::setName(const QString &name)
+{
+    Name = name;
+}
+
+int Workspace::getNumber() const
+{
+    return Number;
+}
+

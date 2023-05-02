@@ -27,7 +27,7 @@ Q_OBJECT
 
 public:
 
-    explicit Workspace(QWidget *parent = nullptr);
+    explicit Workspace(int number, QWidget *parent = nullptr);
     ~Workspace();
 
     /**
@@ -108,8 +108,22 @@ private:
 
     PollyUtility polly;
 
+    /* Sentence index and corresonding audio clip. */
     int audioClipIndex = 0;
+    /* The name of this workspace, determined by tab text. */
+    QString Name;
+    /* The number of this workspace, used for filing. */
+    int Number;
 
+public:
+
+    const QString &getName() const;
+
+    void setName(const QString &name);
+
+    int getNumber() const;
+
+public:
 
 private Q_SLOTS:
 /**

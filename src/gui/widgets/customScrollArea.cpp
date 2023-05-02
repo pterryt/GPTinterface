@@ -30,10 +30,12 @@ customScrollArea::customScrollArea(QWidget *parent)
 
 }
 
-void customScrollArea::addCustomWidget(QWidget *widget)
+void customScrollArea::addCustomWidget(customTextEdit *widget)
 {
     m_vLayout->insertWidget(m_vLayout->count() - 2, widget);
     widget->setFixedWidth(size().width());
+    widget->convoIndex = textBoxCount;
+    ++textBoxCount;
 }
 
 void customScrollArea::updateScrollPosition()

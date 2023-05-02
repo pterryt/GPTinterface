@@ -3,12 +3,13 @@
 #include <QShortcut>
 #include <QTextBlock>
 #include <QAbstractTextDocumentLayout>
+#include <QDir>
 
 #include "../RightToolBar.h"
 
 
-customTextEdit::customTextEdit(QWidget *parent)
-        : QTextEdit(parent)
+customTextEdit::customTextEdit(const int wsIndex, QWidget *parent)
+        : QTextEdit(parent), parentWSIndex(wsIndex)
 {
     setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
@@ -18,6 +19,15 @@ customTextEdit::customTextEdit(QWidget *parent)
     setReadOnly(true);
     updateSizeHint();
     m_appendCursor = new QTextCursor(document());
+
+    QString dirname =
+            "audio_clips/ws_" + QString::number(wsIndex) + "cte_" + QString::number(convoIndex);
+    QDir dir;
+
+    if (!dir.exists(dirname))
+    {
+        dir.mkdir(dirname);
+    }
 
 }
 
@@ -74,6 +84,11 @@ void customTextEdit::removeTrailingBlankLines()
         m_appendCursor->deletePreviousChar();
         updateSizeHint();
     }
+}
+
+int customTextEdit::getParentWsIndex() const
+{
+    return parentWSIndex;
 }
 
 

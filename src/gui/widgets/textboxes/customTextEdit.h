@@ -10,7 +10,7 @@ class customTextEdit : public QTextEdit
 
 public:
 
-    explicit customTextEdit(QWidget *parent = nullptr);
+    explicit customTextEdit(int wsIndex, QWidget *parent = nullptr);
 
     /**
     * Cursor used for appendText. Used by the workspace as well for removing
@@ -22,7 +22,14 @@ public:
     * Removes blank lines at the end of the text edit. Calls updateSizeHint
      * after.
     */
+
     void removeTrailingBlankLines();
+
+    QMap<QString,QUrl> *convoStorage;
+    /**
+    * Index on customScrollArea. Used by PollyUtility to insert into correct convoStorage Map.
+    */
+    int convoIndex = 0;
 
 public Q_SLOTS:
 
@@ -39,6 +46,9 @@ public Q_SLOTS:
 
 private:
 
+    int parentWSIndex;
+public:
+    int getParentWsIndex() const;
 };
 
 #endif // SCROLLTEST_H

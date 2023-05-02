@@ -65,7 +65,12 @@ private:
 
     Workspace *m_currentWorkspace = nullptr;
     int MAX_TABS = 8;
+
+    /* Keeps track of the last tab doubled so it can be changed via RenameLineEdit. */
     int m_lastIndexEdit = 0;
+
+    /* Keeps track of the workspace count for filing. */
+    int m_wsCount = 0;
 
 
     void initialize();
@@ -73,6 +78,8 @@ private:
     void initStyle();
 
     RenameLineEdit *m_renameLineEdit;
+private Q_SLOTS:
+    void handleRename();
 
 };
 

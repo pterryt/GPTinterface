@@ -9,7 +9,7 @@ class aiText : public customTextEdit
 
 public:
 
-    explicit aiText(QWidget *parent = nullptr);
+    explicit aiText(int wsIndex, QWidget *parent = nullptr);
 
 public Q_SLOTS:
 

@@ -1,8 +1,8 @@
 #include "userText.h"
 #include <QTextFrame>
 
-userText::userText(QWidget *parent)
-        : customTextEdit(parent)
+userText::userText(const int wsIndex, QWidget *parent)
+        : customTextEdit(wsIndex, parent)
 {
 
     /* setup page style */

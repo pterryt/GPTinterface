@@ -9,7 +9,7 @@ class userText : public customTextEdit
 
 public:
 
-    explicit userText(QWidget *parent = nullptr);
+    explicit userText(int wsIndex, QWidget *parent = nullptr);
 
 
 public Q_SLOTS:

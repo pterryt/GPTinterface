@@ -1,8 +1,8 @@
 #include "codeBlock.h"
 #include <QTextFrame>
 
-codeBlock::codeBlock(QWidget *parent)
-        : customTextEdit(parent)
+codeBlock::codeBlock(const int wsIndex, QWidget *parent)
+        : customTextEdit(wsIndex, parent)
 {
     /* init syntax highlighter */
     m_syntaxHL = new QSourceHighlite::QSourceHighliter(m_doc);
