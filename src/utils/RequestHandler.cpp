@@ -2,12 +2,14 @@
 #include <QUrl>
 #include <QtNetwork/QtNetwork>
 #include <QtNetwork/QNetworkAccessManager>
+
+#include "../devtools/logger.h"
 #include "GlobalMediator.h"
 
-    RequestHandler::RequestHandler(QObject* parent) : QObject(parent),
-    networkManager(new QNetworkAccessManager(this))
+    RequestHandler::RequestHandler(QObject* parent) :
+                                  QObject(parent), networkManager(new QNetworkAccessManager(this))
     {
-        m_encoder = new TikTokenEncoder(this);
+//        m_encoder = new TikTokenEncoder(this);
     }
 
     void RequestHandler::addMessage(
@@ -94,7 +96,7 @@ void RequestHandler::onFinished() {
     if (reply) {
 //        qDebug() << "Request finished";
         auto start = std::chrono::high_resolution_clock::now();
-        int tokens = m_encoder->encode(m_fullResponse.toStdString());
+        int tokens = TikTokenEncoder::encode(m_fullResponse.toStdString());
         auto end = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>
                 (end - start);
@@ -116,5 +118,16 @@ int RequestHandler::calcResponseLimit()
         Q_EMIT sendContextTokensCalculated(contextContainer.size);
     }
     return limit;
+}
+
+void RequestHandler::clearContext()
+{
+    contextContainer.currentContext.clear();
+    contextContainer.size = 0;
+    while (!m_messages.isEmpty())
+    {
+        m_messages.removeAt(0);
+    }
+    Q_EMIT sendContextTokensCalculated(0);
 }
 

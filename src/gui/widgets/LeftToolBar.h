@@ -17,11 +17,15 @@ public:
 
 Q_SIGNALS:
 
+    void sendHistoryButtonClicked();
+
 private:
     QVBoxLayout *m_layout;
     QPushButton *m_historyButton;
 
 private Q_SLOTS:
+
+    void handleHistoryButtonClicked();
 
 protected:
     void resizeEvent(QResizeEvent *event) override;

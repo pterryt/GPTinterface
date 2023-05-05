@@ -55,6 +55,8 @@ public Q_SLOTS:
 
     void handleSendButtonClicked();
 
+    void handleClearContextButtonClicked();
+
     /**
     * Unhides and setups the line edit for changing tab text.
      * @param index : Index of the tab that was clicked.
@@ -64,7 +66,7 @@ public Q_SLOTS:
 private:
 
     Workspace *m_currentWorkspace = nullptr;
-    int MAX_TABS = 8;
+    int MAX_TABS = 14;
 
     /* Keeps track of the last tab doubled so it can be changed via RenameLineEdit. */
     int m_lastIndexEdit = 0;
@@ -78,7 +80,9 @@ private:
     void initStyle();
 
     RenameLineEdit *m_renameLineEdit;
+
 private Q_SLOTS:
+
     void handleRename();
 
 };

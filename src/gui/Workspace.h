@@ -23,7 +23,7 @@
 */
 class Workspace : public QWidget
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
 
@@ -46,6 +46,12 @@ public:
     */
     int getContextCount() const;
 
+    const QString &getName() const;
+
+    void setName(const QString &name);
+
+    int getNumber() const;
+
 public Q_SLOTS:
 
     /**
@@ -54,6 +60,8 @@ public Q_SLOTS:
     * first.
     */
     void handleSendButtonClicked();
+
+    void handleContextClearedButtonClicked();
 
     /* Calculates the number of tokens in the input box and emits a single to
      * update the bottom bar display. */
@@ -73,13 +81,14 @@ Q_SIGNALS:
      * workspace.
     */
     void sendContextTokens(int count);
+    void sendNameSet(const QString &name);
 
 private:
 
     /* Don't start appending to textEdit before TTS has begun. */
     bool firstPass = true;
     /* Returns true if tts mode is on. */
-    bool m_ttsMode = true;
+    bool m_ttsMode = false;
     /* Holds text bettween pauses when in TTS mode.*/
     QString bufferString;
     /* Returns true if currently processing an API request. */
@@ -105,9 +114,8 @@ private:
     /* Pointer to this workspace's encoder. */
     // (4/25/23) TODO: Should probably be shared.
     QPointer<TikTokenEncoder> encoder;
-
+    /* Class used for synthesizing speech. */
     PollyUtility polly;
-
     /* Sentence index and corresonding audio clip. */
     int audioClipIndex = 0;
     /* The name of this workspace, determined by tab text. */
@@ -115,23 +123,13 @@ private:
     /* The number of this workspace, used for filing. */
     int Number;
 
-public:
-
-    const QString &getName() const;
-
-    void setName(const QString &name);
-
-    int getNumber() const;
-
-public:
-
 private Q_SLOTS:
-/**
- * Slot that takes data from the SSE, appends it to the current
- * customtextEdit, and updates its sizeHint.
- * @param data : QString data received from the RequestHandler-
- * generally ranging from a few characters to a single word.
- * */
+    /**
+     * Slot that takes data from the SSE, appends it to the current
+     * customtextEdit, and updates its sizeHint.
+     * @param data : QString data received from the RequestHandler-
+     * generally ranging from a few characters to a single word.
+     * */
     void onNewDataReceived(const QString& data);
 
     /**
@@ -144,7 +142,6 @@ private Q_SLOTS:
     * Flush buffer and reenable send.
     */
     void handleResponseFinished();
-
 
 };
 

@@ -51,9 +51,6 @@ namespace Ui
 
         void keyPressEvent(QKeyEvent *event) override;
 
-    private Q_SLOTS:
-        void on_actionExit_triggered();
-
     private:
 
         Ui::mainwindow *ui{};
@@ -73,7 +70,6 @@ namespace Ui
         QHBoxLayout * m_horizontalLayout;
         /* Pointer to the widget that holds all horizontal content. */
         QWidget *m_horizontalWidget;
-
         /* Pointer to the pareht widget that hold the rightToolBar */
         QWidget *rightContent;
         /* Pointer to the rightToolBar. */
@@ -82,7 +78,8 @@ namespace Ui
         QWidget *leftContent;
         /* Pointer to the leftToolBar. */
         LeftToolBar *m_leftToolBar;
-
+        /* Pointer to the history panel holder widget. */
+        QWidget *m_historyHolder;
         /* Fixed-width for both side bars. Based on a percentage of the
          * screen size. */
         int m_sideWidgetWidth;
@@ -102,7 +99,14 @@ namespace Ui
         /* Sets the left and right toolbars to match the height of the
          * tabwidget workspace by subtracting the tabbar height. */
         void setSidebarHeight();
-        
+
+        void cleanUpFolders(const QString& path);
+
+    private Q_SLOTS:
+
+        void on_actionExit_triggered();
+
+        void handleHistoryButtonClicked();
 
     };
 } // Ui

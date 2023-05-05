@@ -7,7 +7,6 @@
 #include <QTextBlock>
 #include <QAbstractTextDocumentLayout>
 #include <QScrollBar>
-#include <QThread>
 
 #include "../utils/GlobalMediator.h"
 #include "widgets/textboxes/codeBlock.h"
@@ -21,7 +20,6 @@
 Workspace::Workspace(const int number, QWidget *parent) : QWidget(parent), Number(number)
 {
     /* Needed for calculating tokens from the InputBox on the fly. */
-    encoder = new TikTokenEncoder(this);
     requestHandler = new RequestHandler(this);
 
     /* Used to avoid simultaneous requests from one workspace. */
@@ -67,6 +65,11 @@ Workspace::Workspace(const int number, QWidget *parent) : QWidget(parent), Numbe
     connect(
             requestHandler, &RequestHandler::sendContextTokensCalculated, this,
             &Workspace::handleContextTokensCalculated
+            );
+
+    // (5/5/23) TODO: consider instead passing the textEdits to workspace for caching
+    connect(
+            this, &Workspace::sendNameSet, m_scrollArea, &customScrollArea::handleSetWSName
             );
 }
 
@@ -172,7 +175,7 @@ void Workspace::handleSendButtonClicked()
 /* Get the token count as the user types. */
 void Workspace::handleInputChanged()
 {
-    m_inputCount = encoder->encode(
+    m_inputCount = TikTokenEncoder::encode(
             m_inputBox->toPlainText().toStdString());
 
     Q_EMIT GlobalMediator::instance()->sendInputTokenCount(m_inputCount);
@@ -225,6 +228,7 @@ const QString &Workspace::getName() const
 void Workspace::setName(const QString &name)
 {
     Name = name;
+    Q_EMIT sendNameSet(name);
 }
 
 int Workspace::getNumber() const
@@ -232,3 +236,7 @@ int Workspace::getNumber() const
     return Number;
 }
 
+void Workspace::handleContextClearedButtonClicked()
+{
+    requestHandler->clearContext();
+}

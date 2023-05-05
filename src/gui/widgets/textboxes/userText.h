@@ -11,12 +11,10 @@ public:
 
     explicit userText(int wsIndex, QWidget *parent = nullptr);
 
-
-public Q_SLOTS:
-
 private:
 
     QTextDocument *m_doc = this->document();
+
 };
 
 #endif // GPTINTERFACE_USERTEXT_H

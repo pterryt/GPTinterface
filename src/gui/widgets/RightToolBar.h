@@ -17,6 +17,7 @@ public:
 Q_SIGNALS:
 
     void sendButtonClick();
+    void clearContextButtonClick();
 
 private:
 
@@ -28,10 +29,13 @@ private:
     QPushButton *m_micButton;
     /* Pointer to the appends button. */
     QPushButton *m_optionsButton;
+    /* Pointer to the clear context button. */
+    QPushButton *m_clearContextButton;
 
 private Q_SLOTS:
 
     void handleSendButtonClicked();
+    void handleClearContextButtonClicked();
 
 protected:
     void resizeEvent(QResizeEvent *event) override;

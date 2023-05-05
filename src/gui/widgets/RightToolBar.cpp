@@ -13,11 +13,19 @@ RightToolBar::RightToolBar(QWidget *parent)
     QIcon sendIcon = QIcon("../icon/send-message.png");
     QIcon micIcon = QIcon("../icon/microphone.png");
     QIcon settingsIcon = QIcon("../icon/menu.png");
+    QIcon clearContextIcon = QIcon("../icon/trash.png");
 
     m_layout = new QVBoxLayout(this);
 
     m_layout->setSpacing(5);
     m_layout->addStretch();
+
+
+    m_clearContextButton = new QPushButton(this);
+    m_layout->addWidget(m_clearContextButton);
+    m_clearContextButton->setIcon(clearContextIcon);
+    m_clearContextButton->setIconSize(QSize(20,20));
+
 
     m_optionsButton = new QPushButton(this);
     m_layout->addWidget(m_optionsButton);
@@ -37,8 +45,13 @@ RightToolBar::RightToolBar(QWidget *parent)
     m_layout->setContentsMargins(0,0,0,1);
     setLayout(m_layout);
 
-    connect(m_sendButton, &QPushButton::clicked, this,
-            &RightToolBar::handleSendButtonClicked);
+    connect(
+            m_sendButton, &QPushButton::clicked,
+            this, &RightToolBar::handleSendButtonClicked);
+
+    connect(
+            m_clearContextButton, &QPushButton::clicked,
+            this, &RightToolBar::handleClearContextButtonClicked);
 }
 
 /**
@@ -53,6 +66,7 @@ void RightToolBar::resizeEvent(QResizeEvent *event)
         m_sendButton->setFixedHeight(nHeight);
         m_micButton->setFixedHeight(nHeight);
         m_optionsButton->setFixedHeight(nHeight);
+        m_clearContextButton->setFixedHeight(nHeight);
     }
 }
 
@@ -62,4 +76,12 @@ void RightToolBar::resizeEvent(QResizeEvent *event)
 void RightToolBar::handleSendButtonClicked()
 {
     Q_EMIT sendButtonClick();
+}
+
+/**
+* Emits a signal to to MainWindow -> WSTabWidget -> Workspace
+*/
+void RightToolBar::handleClearContextButtonClicked()
+{
+    Q_EMIT clearContextButtonClick();
 }

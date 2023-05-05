@@ -1,8 +1,12 @@
 #include "customScrollArea.h"
-#include "textboxes/customTextEdit.h"
 #include <QScrollBar>
 #include <QResizeEvent>
 #include <QCoreApplication>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QFile>
+#include <QDateTime>
 
 customScrollArea::customScrollArea(QWidget *parent)
         : QScrollArea(parent)
@@ -14,7 +18,7 @@ customScrollArea::customScrollArea(QWidget *parent)
     scrollAreaContent->setSizePolicy(QSizePolicy::Expanding,
                                      QSizePolicy::Preferred);
     setWidgetResizable(true);
-    setVerticalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
+    setVerticalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAsNeeded);
     setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
     auto *spacer =
             new QSpacerItem(0,0, QSizePolicy::Minimum, QSizePolicy::Expanding);
@@ -35,6 +39,10 @@ void customScrollArea::addCustomWidget(customTextEdit *widget)
     m_vLayout->insertWidget(m_vLayout->count() - 2, widget);
     widget->setFixedWidth(size().width());
     widget->convoIndex = textBoxCount;
+    QPair<customTextEdit::bType, customTextEdit*> pair;
+    pair.first = widget->getBtype();
+    pair.second = widget;
+    textEditList.push_back(pair);
     ++textBoxCount;
 }
 
@@ -59,3 +67,50 @@ void customScrollArea::resizeEvent(QResizeEvent *event)
         }
     }
 }
+
+void customScrollArea::saveConversation()
+{
+    if (!textEditList.isEmpty())
+    {
+        /* Get time for unique naming purposes. */
+        QString time = QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss");
+        /* Create the QDoc. */
+        QJsonDocument doc;
+        QJsonArray arr;
+        QJsonObject pageName;
+        pageName["name"] = wsName == "" ? time : wsName;
+        arr.append(pageName);
+
+        for (QPair<customTextEdit::bType, customTextEdit*> cte : textEditList)
+        {
+            QJsonObject obj;
+            obj["type"] = cte.first;
+            obj["text"] = cte.second->toPlainText();
+            arr.append(obj);
+        }
+        doc.setArray(arr);
+
+       /* Save the QDoc to a file. */
+       QString saveLoc = "saved_chats/";
+       QString filename =  time + ".json";
+       QFile Jsonfile(saveLoc + filename);
+       if (Jsonfile.open(QIODevice::WriteOnly))
+       {
+           Jsonfile.write(doc.toJson());
+           Jsonfile.close();
+       }
+
+    }
+
+}
+
+void customScrollArea::handleSetWSName(const QString &name)
+{
+    wsName = name;
+}
+
+customScrollArea::~customScrollArea()
+{
+    saveConversation();
+}
+

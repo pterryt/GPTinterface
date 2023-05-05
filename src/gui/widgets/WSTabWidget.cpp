@@ -22,12 +22,21 @@ WSTabWidget::WSTabWidget(QWidget *parent)
     connect(
             m_renameLineEdit, &RenameLineEdit::sendEnterPressed, this, &WSTabWidget::handleRename
     );
+    connect(this, &QTabWidget::tabCloseRequested,
+            this, [&](int index)
+                {
+//                    removeTab(index);
+                    widget(index)->deleteLater();
+                }
+            );
 
 }
 
 void WSTabWidget::initialize()
 {
+    setTabsClosable(true);
     addTab(new QWidget(this), QString::fromStdString("+"));
+    tabBar()->tabButton(0, QTabBar::RightSide)->resize(0, 0);
     newTab();
     m_currentWorkspace = qobject_cast<Workspace *>(this->currentWidget());
     m_renameLineEdit = new RenameLineEdit(this);
@@ -82,10 +91,17 @@ void WSTabWidget::newTab()
 
 void WSTabWidget::handleSendButtonClicked()
 {
-
     if (m_currentWorkspace)
     {
         m_currentWorkspace->handleSendButtonClicked();
+    }
+}
+
+void WSTabWidget::handleClearContextButtonClicked()
+{
+    if (m_currentWorkspace)
+    {
+        m_currentWorkspace->handleContextClearedButtonClicked();
     }
 }
 

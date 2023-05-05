@@ -4,6 +4,8 @@
 #include <QTabBar>
 #include <QVBoxLayout>
 #include <QKeyEvent>
+#include <QFileInfo>
+#include <QDir>
 
 #include "../utils/GlobalMediator.h"
 #include "widgets/RightToolBar.h"
@@ -22,26 +24,31 @@ namespace Ui
         m_screen = QGuiApplication::primaryScreen();
         m_sideWidgetWidth = static_cast<int>(m_screen->size().width() * .02);
 
-
         /* HORIZONTAL */
         m_horizontalWidget = new QWidget(this);
         m_horizontalLayout = new QHBoxLayout(m_horizontalWidget);
-        m_horizontalLayout->setContentsMargins(1,0,1,0);
+        m_horizontalLayout->setContentsMargins(1, 0, 1, 0);
         m_horizontalLayout->setSpacing(0);
 
         /* VERTICAL */
         m_verticalWidget = new QWidget(this);
         m_verticalLayout = new QVBoxLayout(m_verticalWidget);
-        m_verticalLayout->setContentsMargins(1,0,0,1);
+        m_verticalLayout->setContentsMargins(1, 0, 0, 1);
         m_verticalLayout->setSpacing(0);
         m_verticalWidget->setLayout(m_verticalLayout);
         m_verticalLayout->addWidget(m_horizontalWidget);
+
 
         /* BOTTOM */
         iniBottomBar();
 
         /* LEFT */
         iniLeftBar();
+
+        m_historyHolder = new QWidget(this);
+        m_historyHolder->setFixedWidth(400);
+        m_historyHolder->hide();
+        m_horizontalLayout->addWidget(m_historyHolder);
 
         /* TAB WIDGET */
         m_tabWidget = new WSTabWidget(m_horizontalWidget);
@@ -63,6 +70,10 @@ namespace Ui
                 &WSTabWidget::handleSendButtonClicked);
 
         connect(
+                m_rightToolBar, &RightToolBar::clearContextButtonClick, m_tabWidget,
+                &WSTabWidget::handleClearContextButtonClicked);
+
+        connect(
                 m_tabWidget, &WSTabWidget::sendTokenCounts, m_bottomToolBar,
                 &BottomToolBar::handleTabChanged);
 
@@ -75,13 +86,18 @@ namespace Ui
                 &MainWindow::registerCurrentWorkspace);
 
         connect(
-                this, &MainWindow::destroyed, this, [](){ QApplication::quit(); }
-                );
+                m_leftToolBar, &LeftToolBar::sendHistoryButtonClicked,
+                this, &MainWindow::handleHistoryButtonClicked);
+
+        connect(
+                this, &MainWindow::destroyed, this, []() { QApplication::quit(); }
+        );
     }
 
     MainWindow::~MainWindow()
     {
         delete ui;
+        cleanUpFolders("audio_clips");
     }
 
     void MainWindow::iniBottomBar()
@@ -89,8 +105,8 @@ namespace Ui
         /* Without a parent widget, outlining the bottom bar directly is not
          * visible. */
         /* Create Widgets */
-        auto* btmContent = new QWidget(m_verticalWidget);
-        auto* btmLayout = new QHBoxLayout(btmContent);
+        auto *btmContent = new QWidget(m_verticalWidget);
+        auto *btmLayout = new QHBoxLayout(btmContent);
         m_bottomToolBar = new BottomToolBar(btmContent);
 
         /* Arrange Widgets */
@@ -99,8 +115,8 @@ namespace Ui
         btmContent->setLayout(btmLayout);
 
         /* Styling */
-        btmLayout->setContentsMargins(0,0,0,0);
-        btmContent->setFixedHeight(m_screen->size().height()*.04);
+        btmLayout->setContentsMargins(0, 0, 0, 0);
+        btmContent->setFixedHeight(m_screen->size().height() * .04);
         /* All children are outlined if you don't style as object. */
         btmContent->setObjectName("Outer");
         btmContent->setStyleSheet("#Outer { "
@@ -116,7 +132,7 @@ namespace Ui
          * visible. */
         /* Create Widgets */
         rightContent = new QWidget(m_horizontalWidget);
-        auto* rightLayout = new QVBoxLayout(rightContent);
+        auto *rightLayout = new QVBoxLayout(rightContent);
         m_rightToolBar = new RightToolBar(rightContent);
 
         /* Arrange Widgets */
@@ -126,7 +142,7 @@ namespace Ui
 
         /* Styling */
         m_rightToolBar->setFixedWidth(m_sideWidgetWidth);
-        rightLayout->setContentsMargins(5,5,5,5);
+        rightLayout->setContentsMargins(5, 5, 5, 5);
         /* All children are outlined if you don't style as object. */
         rightContent->setObjectName("RightB");
         rightContent->setStyleSheet("#RightB {"
@@ -134,7 +150,7 @@ namespace Ui
                                     "border-left: 1px solid #545454;"
                                     "border-right: 1px solid #545454;"
                                     "border-bottom: none;"
-                                   "}");
+                                    "}");
     }
 
     void MainWindow::iniLeftBar()
@@ -143,7 +159,7 @@ namespace Ui
          * visible. */
         /* Create Widgets */
         leftContent = new QWidget(m_horizontalWidget);
-        auto* leftLayout = new QVBoxLayout(leftContent);
+        auto *leftLayout = new QVBoxLayout(leftContent);
         m_leftToolBar = new LeftToolBar(leftContent);
 
         /* Arrange Widgets */
@@ -153,17 +169,17 @@ namespace Ui
 
         /* Styling */
         m_leftToolBar->setFixedWidth(m_sideWidgetWidth);
-        leftLayout->setContentsMargins(5,5,5,5);
+        leftLayout->setContentsMargins(5, 5, 5, 5);
         /* All children are outlined if you don't style as object. */
         leftContent->setObjectName("LeftB");
         leftContent->setStyleSheet("#LeftB {"
-                                     "border-top: 1px solid #545454;"
-                                     "border-left: 1px solid #545454;"
-                                     "border-right: 1px solid #545454;"
-                                     "border-bottom: none;"
-                                     "}");
+                                   "border-top: 1px solid #545454;"
+                                   "border-left: 1px solid #545454;"
+                                   "border-right: 1px solid #545454;"
+                                   "border-bottom: none;"
+                                   "}");
 
-
+        GlobalMediator::instance()->setLeftToolBar(m_leftToolBar);
     }
 
     void MainWindow::setSidebarHeight()
@@ -181,13 +197,18 @@ namespace Ui
     void MainWindow::keyPressEvent(QKeyEvent *event)
     {
         /* Shift + Enter -> focus the inputBox. */
-        if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
-            if (event->modifiers() & Qt::ShiftModifier) {
-                if (m_tabWidget->getCurrentWorkspace()->getinputBox()) {
+        if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter)
+        {
+            if (event->modifiers() & Qt::ShiftModifier)
+            {
+                if (m_tabWidget->getCurrentWorkspace()->getinputBox())
+                {
                     m_tabWidget->getCurrentWorkspace()->getinputBox()->setFocus();
                 }
             }
-        } else {
+        }
+        else
+        {
             QMainWindow::keyPressEvent(event);
         }
     }
@@ -205,28 +226,28 @@ namespace Ui
                 m_currentWorkspace, &Workspace::sendContextTokens,
                 m_bottomToolBar,
                 &BottomToolBar::setContextTokens
-                );
+        );
     }
 
     void MainWindow::unregisterCurrentWorkspace()
     {
         disconnect(
-               m_currentWorkspace, &Workspace::sendContextTokens,
-               m_bottomToolBar, &BottomToolBar::setContextTokens
-                );
+                m_currentWorkspace, &Workspace::sendContextTokens,
+                m_bottomToolBar, &BottomToolBar::setContextTokens
+        );
     }
 
     void MainWindow::iniTheme()
     {
         QPalette darkPalette;
-        darkPalette.setColor(QPalette::Window, QColor(53,53,53));
+        darkPalette.setColor(QPalette::Window, QColor(53, 53, 53));
         darkPalette.setColor(QPalette::WindowText, Qt::white);
-        darkPalette.setColor(QPalette::Base, QColor(25,25,25));
-        darkPalette.setColor(QPalette::AlternateBase, QColor(53,53,53));
+        darkPalette.setColor(QPalette::Base, QColor(25, 25, 25));
+        darkPalette.setColor(QPalette::AlternateBase, QColor(53, 53, 53));
         darkPalette.setColor(QPalette::ToolTipBase, Qt::white);
         darkPalette.setColor(QPalette::ToolTipText, Qt::white);
         darkPalette.setColor(QPalette::Text, Qt::white);
-        darkPalette.setColor(QPalette::Button, QColor(53,53,53));
+        darkPalette.setColor(QPalette::Button, QColor(53, 53, 53));
         darkPalette.setColor(QPalette::ButtonText, Qt::white);
         darkPalette.setColor(QPalette::BrightText, Qt::red);
         darkPalette.setColor(QPalette::Link, QColor(42, 130, 218));
@@ -235,8 +256,8 @@ namespace Ui
         QApplication::setPalette(darkPalette);
 
         setStyleSheet("QToolTip { color: #ffffff; background-color: "
-                         "#2a82da; "
-                          "border: 1px solid black; font-size: 22px}");
+                      "#2a82da; "
+                      "border: 1px solid black; font-size: 22px}");
     }
 
     /* Resize the sidebars, which are based on the tabwidget's height. */
@@ -247,9 +268,28 @@ namespace Ui
     }
 
 
-void MainWindow::on_actionExit_triggered()
-{
+    void MainWindow::on_actionExit_triggered()
+    {
         QApplication::quit();
-}
+    }
+
+    void MainWindow::cleanUpFolders(const QString& path)
+    {
+        QDir dir(path);
+        dir.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
+        for (const QFileInfo& fileInfo : dir.entryInfoList()) {
+            if (fileInfo.isDir()) {
+                cleanUpFolders(fileInfo.absoluteFilePath());
+                dir.rmdir(fileInfo.absoluteFilePath());
+            } else {
+                dir.remove(fileInfo.absoluteFilePath());
+            }
+        }
+    }
+
+    void MainWindow::handleHistoryButtonClicked()
+    {
+        m_historyHolder->isHidden() ? m_historyHolder->show() : m_historyHolder->hide();
+    }
 
 } // Ui

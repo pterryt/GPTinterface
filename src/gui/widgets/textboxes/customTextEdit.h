@@ -44,11 +44,27 @@ public Q_SLOTS:
     */
     void updateSizeHint();
 
+public:
+
+    enum bType
+    {
+        USER,
+        AI,
+        CODE
+    };
+
+    int getParentWsIndex() const;
+
+    [[nodiscard]] bType getBtype() const;
+
+protected:
+
+    bType btype;
+
 private:
 
     int parentWSIndex;
-public:
-    int getParentWsIndex() const;
+
 };
 
 #endif // SCROLLTEST_H

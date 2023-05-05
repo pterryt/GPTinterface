@@ -12,11 +12,8 @@ public:
 
     explicit codeBlock(const int wsIndex, QWidget *parent = nullptr);
 
-public Q_SLOTS:
-
-//    void appendText(const QString &text) override;
-
 private:
+
     QSourceHighlite::QSourceHighliter *m_syntaxHL;
     QTextDocument *m_doc = this->document();
 };

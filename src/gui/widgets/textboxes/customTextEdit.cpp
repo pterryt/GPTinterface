@@ -31,7 +31,6 @@ customTextEdit::customTextEdit(const int wsIndex, QWidget *parent)
 
 }
 
-
 void customTextEdit::appendText(const QString &text)
 {
     m_appendCursor->movePosition(QTextCursor::End);
@@ -59,7 +58,6 @@ void customTextEdit::updateSizeHint()
     {
         parentWidget()->updateGeometry();
     }
-
 }
 
 void customTextEdit::removeTrailingBlankLines()
@@ -89,6 +87,11 @@ void customTextEdit::removeTrailingBlankLines()
 int customTextEdit::getParentWsIndex() const
 {
     return parentWSIndex;
+}
+
+customTextEdit::bType customTextEdit::getBtype() const
+{
+    return btype;
 }
 
 

@@ -21,6 +21,8 @@ codeBlock::codeBlock(const int wsIndex, QWidget *parent)
     QFont font = QFont("JetBrains Mono");
     font.setPointSize(14);
     setFont(font);
+
+    btype = CODE;
 }
 
 /*

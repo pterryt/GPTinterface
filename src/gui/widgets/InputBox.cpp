@@ -69,6 +69,10 @@ void InputBox::keyPressEvent(QKeyEvent *e) {
             QTextEdit::keyPressEvent(e);
         }
     }
+    else if (e->key() == Qt::Key_Escape)
+    {
+        clearFocus();
+    }
     else
     {
         QTextEdit::keyPressEvent(e);

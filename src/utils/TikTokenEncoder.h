@@ -7,16 +7,16 @@
 
 class TikTokenEncoder : public QObject
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     explicit TikTokenEncoder(QObject *parent = nullptr);
     ~TikTokenEncoder() override;
-    int encode(const std::string &input);
+    static int encode(const std::string &input);
 
 private:
-    PyObject* module;
-    PyObject* encoding;
+    static PyObject* module;
+    static PyObject* encoding;
 };
 
 #endif // GPTINTERFACE_TIKTOKENENCODER_H

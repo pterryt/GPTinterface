@@ -14,7 +14,6 @@ public:
 public Q_SLOTS:
 
 private:
-
     QTextDocument *m_doc = this->document();
 };
 

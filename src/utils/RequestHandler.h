@@ -37,6 +37,7 @@ Q_SIGNALS:
 public Q_SLOTS:
     void onReadyRead();
     void onFinished();
+    void clearContext();
 
 private:
     struct Message

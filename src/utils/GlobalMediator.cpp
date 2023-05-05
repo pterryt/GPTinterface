@@ -66,6 +66,17 @@ Espnet2Encoder *GlobalMediator::getEspnet2Encoder()
     return m_espEncoder;
 }
 
+GlobalMediator *GlobalMediator::setLeftToolBar(LeftToolBar *ltb)
+{
+    m_leftToolBar = ltb;
+    return m_mediator;
+}
+
+LeftToolBar *GlobalMediator::getLeftToolBar()
+{
+    return m_leftToolBar;
+}
+
 //GlobalMediator *GlobalMediator::setMediaPlayer(MediaQueue *mp)
 //{
 //    m_mediaPlayer = mp;

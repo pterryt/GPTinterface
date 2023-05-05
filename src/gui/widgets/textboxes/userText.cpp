@@ -17,4 +17,7 @@ userText::userText(const int wsIndex, QWidget *parent)
     font.setPointSize(14);
     setFont(font);
 
+    btype = USER;
+
 }
+

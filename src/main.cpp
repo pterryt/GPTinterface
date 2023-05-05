@@ -7,6 +7,7 @@
 #include "utils/GlobalMediator.h"
 #include "devtools/ToolTipEventFilter.h"
 #include "devtools/logger.h"
+#include "utils/TikTokenEncoder.h"
 
 /* Add tooltips - to all objects in the gui - that display class, parent class,
  * and grandparent class. */
@@ -19,10 +20,11 @@ void installFiltersRecursively(QWidget *widget, ToolTipEventFilter *filter) {
 
 int main(int argc, char *argv[])
 {
-    bool debugMode = true;
+    bool debugMode = false;
 
     /* Create the logger and set logging level. */
     giLog::initLogger();
+    TikTokenEncoder *ttEncoder = new TikTokenEncoder();
 
     GlobalMediator::create();
     QApplication App(argc, argv);
@@ -42,6 +44,7 @@ int main(int argc, char *argv[])
     int ret = App.exec();
 
     delete GlobalMediator::instance();
+    delete ttEncoder;
     Aws::ShutdownAPI(options);
     return ret;
 }

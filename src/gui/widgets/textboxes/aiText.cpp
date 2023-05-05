@@ -17,6 +17,6 @@ aiText::aiText(const int wsIndex, QWidget *parent)
     QFont font = QFont("SansSerif");
     font.setPointSize(14);
     setFont(font);
-
+    btype = AI;
 
 }

@@ -6,6 +6,7 @@
 class RightToolBar;
 class BottomToolBar;
 class WSTabWidget;
+class LeftToolBar;
 class Espnet2Encoder;
 //class MediaQueue;
 
@@ -21,12 +22,14 @@ public:
     GlobalMediator(const GlobalMediator &) = delete;
     GlobalMediator& operator=(const GlobalMediator &) = delete;
 
+    GlobalMediator* setLeftToolBar(LeftToolBar* ltb);
     GlobalMediator* setRightToolBar(RightToolBar* rtb);
     GlobalMediator* setBottomToolBar(BottomToolBar* btb);
     GlobalMediator* setWSTabWidget(WSTabWidget* wstw);
 //    GlobalMediator* setMediaPlayer(MediaQueue* mp);
     GlobalMediator* setEspnet2Encoder(Espnet2Encoder* espEnc);
 
+    LeftToolBar* getLeftToolBar();
     RightToolBar* getRightToolBar();
     BottomToolBar* getBottomToolBar();
     WSTabWidget* getWSTabWidget();
@@ -43,6 +46,7 @@ private:
     inline static GlobalMediator *m_mediator = nullptr;
     explicit GlobalMediator(QObject *parent = nullptr);
 
+    LeftToolBar *m_leftToolBar;
     RightToolBar *m_rightToolBar;
     BottomToolBar *m_bottomToolBar;
     WSTabWidget *m_tabWidget;
