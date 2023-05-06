@@ -152,6 +152,10 @@ void Workspace::handleSendButtonClicked()
         QString inputString = m_inputBox->toPlainText();
         if (inputString == "") return;
 
+        if (Name == "")
+        {
+            setName(inputString);
+        }
         m_currentInput = new userText(Number, m_scrollArea);
         m_scrollArea->addCustomWidget(m_currentInput);
         m_scrollArea->updateScrollPosition();
@@ -227,7 +231,7 @@ const QString &Workspace::getName() const
 
 void Workspace::setName(const QString &name)
 {
-    Name = name;
+    Name = name.left(20);
     Q_EMIT sendNameSet(name);
 }
 
@@ -239,4 +243,38 @@ int Workspace::getNumber() const
 void Workspace::handleContextClearedButtonClicked()
 {
     requestHandler->clearContext();
+}
+
+void Workspace::rebuildHistoricConversation(QString& file)
+{
+    QFile hFile = QFile(file);
+    hFile.open(QIODevice::ReadOnly | QIODevice::Text);
+    QJsonDocument jDoc = QJsonDocument::fromJson(hFile.readAll());
+    QJsonArray arr = jDoc.array();
+    setName(arr[0].toObject()["name"].toString());
+
+    for (int i = 1; i < arr.size(); i++)
+    {
+        QJsonObject obj = arr[i].toObject();
+
+        int eType = obj["type"].toInteger();
+        qDebug() << "eRead: " << eType;
+        customTextEdit* cte;
+        switch(eType)
+        {
+            case 0:
+                cte = new userText(i-1, m_scrollArea);
+                break;
+            case 1:
+                cte = new aiText(i-1, m_scrollArea);
+                break;
+            case 2:
+                cte = new codeBlock(i-1, m_scrollArea);
+                break;
+        }
+
+        cte->appendText(obj["text"].toString());
+        m_scrollArea->addCustomWidget(cte);
+    }
+
 }

@@ -11,6 +11,7 @@
 #include "widgets/RightToolBar.h"
 #include "widgets/BottomToolBar.h"
 #include "../devtools/logger.h"
+#include "widgets/HistoryList.h"
 
 
 namespace Ui
@@ -47,6 +48,10 @@ namespace Ui
 
         m_historyHolder = new QWidget(this);
         m_historyHolder->setFixedWidth(400);
+        auto* vl = new QVBoxLayout(m_historyHolder);
+        auto* hl = new HistoryList(m_historyHolder);
+        vl->addWidget(hl);
+        m_historyHolder->setLayout(vl);
         m_historyHolder->hide();
         m_horizontalLayout->addWidget(m_historyHolder);
 

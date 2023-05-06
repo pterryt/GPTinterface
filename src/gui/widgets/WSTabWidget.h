@@ -62,6 +62,10 @@ public Q_SLOTS:
      * @param index : Index of the tab that was clicked.
     */
     void handleTabDoubleClicked(int index);
+    /**
+    * Reloads a workspace from history in a new tab.
+    */
+    void handleHistoryButtonClicked(QString &file);
 
 private:
 

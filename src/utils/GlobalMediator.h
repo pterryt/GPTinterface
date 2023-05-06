@@ -38,6 +38,7 @@ public:
 
     Q_SIGNALS:
     void sendInputTokenCount(int count);
+    void sendHistoryButtonClicked(QString& file);
 
 public Q_SLOTS:
 

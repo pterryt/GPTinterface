@@ -28,6 +28,7 @@ class Workspace : public QWidget
 public:
 
     explicit Workspace(int number, QWidget *parent = nullptr);
+
     ~Workspace();
 
     /**
@@ -45,6 +46,10 @@ public:
      * conversation.
     */
     int getContextCount() const;
+    /**
+    * Builds a conversation from file.
+    */
+    void rebuildHistoricConversation(QString& file);
 
     const QString &getName() const;
 

@@ -1,4 +1,5 @@
 #include "WSTabWidget.h"
+#include "../../utils/GlobalMediator.h"
 
 WSTabWidget::WSTabWidget(QWidget *parent)
         : QTabWidget(parent)
@@ -25,10 +26,13 @@ WSTabWidget::WSTabWidget(QWidget *parent)
     connect(this, &QTabWidget::tabCloseRequested,
             this, [&](int index)
                 {
-//                    removeTab(index);
                     widget(index)->deleteLater();
                 }
             );
+    connect(
+            GlobalMediator::instance(), &GlobalMediator::sendHistoryButtonClicked,
+            this, &WSTabWidget::handleHistoryButtonClicked);
+
 
 }
 
@@ -129,8 +133,11 @@ void WSTabWidget::handleTabDoubleClicked(int index)
 void WSTabWidget::handleRename()
 {
     setTabText(m_lastIndexEdit, m_renameLineEdit->text());
-    qobject_cast<Workspace *>(widget(0))->setName(m_renameLineEdit->text());
+    qobject_cast<Workspace *>(widget(m_lastIndexEdit))->setName(m_renameLineEdit->text());
 }
 
-
-
+void WSTabWidget::handleHistoryButtonClicked(QString &file)
+{
+    newTab();
+    m_currentWorkspace->rebuildHistoricConversation(file);
+}

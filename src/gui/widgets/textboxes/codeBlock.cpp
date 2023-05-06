@@ -23,6 +23,7 @@ codeBlock::codeBlock(const int wsIndex, QWidget *parent)
     setFont(font);
 
     btype = CODE;
+    qDebug() << "codeBlock made with btype: " << btype;
 }
 
 /*
