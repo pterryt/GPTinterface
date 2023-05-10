@@ -152,6 +152,7 @@ void Workspace::handleSendButtonClicked()
         QString inputString = m_inputBox->toPlainText();
         if (inputString == "") return;
 
+        qDebug() << Name;
         if (Name == "")
         {
             setName(inputString);
@@ -231,8 +232,8 @@ const QString &Workspace::getName() const
 
 void Workspace::setName(const QString &name)
 {
-    Name = name.left(20);
-    Q_EMIT sendNameSet(name);
+    Name = name.left(35);
+    Q_EMIT sendNameSet(Name);
 }
 
 int Workspace::getNumber() const
@@ -245,9 +246,9 @@ void Workspace::handleContextClearedButtonClicked()
     requestHandler->clearContext();
 }
 
-void Workspace::rebuildHistoricConversation(QString& file)
+void Workspace::rebuildHistoricConversation(QPointer<HistoryButton> &button)
 {
-    QFile hFile = QFile(file);
+    QFile hFile = QFile(button->getMFile());
     hFile.open(QIODevice::ReadOnly | QIODevice::Text);
     QJsonDocument jDoc = QJsonDocument::fromJson(hFile.readAll());
     QJsonArray arr = jDoc.array();
@@ -258,7 +259,6 @@ void Workspace::rebuildHistoricConversation(QString& file)
         QJsonObject obj = arr[i].toObject();
 
         int eType = obj["type"].toInteger();
-        qDebug() << "eRead: " << eType;
         customTextEdit* cte;
         switch(eType)
         {
@@ -275,6 +275,14 @@ void Workspace::rebuildHistoricConversation(QString& file)
 
         cte->appendText(obj["text"].toString());
         m_scrollArea->addCustomWidget(cte);
+        m_scrollArea->hasChanged = false;
+        m_scrollArea->isHistoric = true;
+        m_scrollArea->hButton = button;
     }
 
+}
+
+const QPointer<customScrollArea> &Workspace::getMScrollArea() const
+{
+    return m_scrollArea;
 }

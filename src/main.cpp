@@ -20,7 +20,7 @@ void installFiltersRecursively(QWidget *widget, ToolTipEventFilter *filter) {
 
 int main(int argc, char *argv[])
 {
-    bool debugMode = false;
+    bool debugMode = true;
 
     /* Create the logger and set logging level. */
     giLog::initLogger();
@@ -28,6 +28,9 @@ int main(int argc, char *argv[])
 
     GlobalMediator::create();
     QApplication App(argc, argv);
+    QObject::connect(
+            &App, &QCoreApplication::aboutToQuit, GlobalMediator::instance(), &GlobalMediator::handleApplicationShuttingDown
+            );
     Ui::MainWindow mainWindow;
 
 

@@ -18,7 +18,6 @@ userText::userText(const int wsIndex, QWidget *parent)
     setFont(font);
 
     btype = USER;
-    qDebug() << "userText made with btype: " << btype;
 
 }
 

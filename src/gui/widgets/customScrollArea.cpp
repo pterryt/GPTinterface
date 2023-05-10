@@ -7,6 +7,8 @@
 #include <QJsonDocument>
 #include <QFile>
 #include <QDateTime>
+#include "../../utils/GlobalMediator.h"
+
 
 customScrollArea::customScrollArea(QWidget *parent)
         : QScrollArea(parent)
@@ -44,6 +46,7 @@ void customScrollArea::addCustomWidget(customTextEdit *widget)
     pair.second = widget;
     textEditList.push_back(pair);
     ++textBoxCount;
+    hasChanged = true;
 }
 
 void customScrollArea::updateScrollPosition()
@@ -70,7 +73,8 @@ void customScrollArea::resizeEvent(QResizeEvent *event)
 
 void customScrollArea::saveConversation()
 {
-    if (!textEditList.isEmpty())
+    bool saveSuccess = false;
+    if (!textEditList.isEmpty() && hasChanged)
     {
         /* Get time for unique naming purposes. */
         QString time = QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss");
@@ -91,17 +95,33 @@ void customScrollArea::saveConversation()
         doc.setArray(arr);
 
        /* Save the QDoc to a file. */
-       QString saveLoc = "saved_chats/";
-       QString filename =  time + ".json";
-       QFile Jsonfile(saveLoc + filename);
+
+       QString saveLoc = QCoreApplication::applicationDirPath() + "/saved_chats/";
+       QString filename =  time + "_" + wsName + ".json";
+       filename = saveLoc + filename;
+       QFile Jsonfile(filename);
        if (Jsonfile.open(QIODevice::WriteOnly))
        {
-           Jsonfile.write(doc.toJson());
+           if (Jsonfile.write(doc.toJson()) != -1)
+           {
+               saveSuccess = true;
+           }
            Jsonfile.close();
+           if (!GlobalMediator::instance()->isMShuttingDown())
+           {
+               Q_EMIT GlobalMediator::instance()->sendNewHistoryItem(filename);
+           }
        }
-
     }
-
+    if (isHistoric && saveSuccess)
+    {
+        QFile hFile = QFile(hButton->getMFile());
+        if (hFile.exists()){
+            hFile.remove();
+        }
+        hButton->deleteLater();
+        hButton = nullptr;
+    }
 }
 
 void customScrollArea::handleSetWSName(const QString &name)
@@ -113,4 +133,5 @@ customScrollArea::~customScrollArea()
 {
     saveConversation();
 }
+
 

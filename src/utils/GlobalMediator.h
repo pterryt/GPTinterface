@@ -8,6 +8,7 @@ class BottomToolBar;
 class WSTabWidget;
 class LeftToolBar;
 class Espnet2Encoder;
+class HistoryButton;
 //class MediaQueue;
 
 class GlobalMediator : public QObject
@@ -38,15 +39,22 @@ public:
 
     Q_SIGNALS:
     void sendInputTokenCount(int count);
-    void sendHistoryButtonClicked(QString& file);
+    void sendHistoryButtonClicked(QPointer<HistoryButton> &button);
+    void sendNewHistoryItem(QString& file);
 
 public Q_SLOTS:
+    void handleApplicationShuttingDown();
 
 private:
 
     inline static GlobalMediator *m_mediator = nullptr;
     explicit GlobalMediator(QObject *parent = nullptr);
 
+    bool m_shuttingDown = false;
+public:
+    bool isMShuttingDown() const;
+
+private:
     LeftToolBar *m_leftToolBar;
     RightToolBar *m_rightToolBar;
     BottomToolBar *m_bottomToolBar;

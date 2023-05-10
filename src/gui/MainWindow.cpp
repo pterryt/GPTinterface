@@ -6,6 +6,7 @@
 #include <QKeyEvent>
 #include <QFileInfo>
 #include <QDir>
+#include <QScrollBar>
 
 #include "../utils/GlobalMediator.h"
 #include "widgets/RightToolBar.h"
@@ -49,8 +50,8 @@ namespace Ui
         m_historyHolder = new QWidget(this);
         m_historyHolder->setFixedWidth(400);
         auto* vl = new QVBoxLayout(m_historyHolder);
-        auto* hl = new HistoryList(m_historyHolder);
-        vl->addWidget(hl);
+        m_historyList = new HistoryList(m_historyHolder);
+        vl->addWidget(m_historyList);
         m_historyHolder->setLayout(vl);
         m_historyHolder->hide();
         m_horizontalLayout->addWidget(m_historyHolder);
@@ -199,6 +200,10 @@ namespace Ui
         }
     }
 
+    /* ------------------- -------- ------------------- */
+    /* ------------------- KEYBINDS ------------------- */
+    /* ------------------- -------- ------------------- */
+
     void MainWindow::keyPressEvent(QKeyEvent *event)
     {
         /* Shift + Enter -> focus the inputBox. */
@@ -211,6 +216,59 @@ namespace Ui
                     m_tabWidget->getCurrentWorkspace()->getinputBox()->setFocus();
                 }
             }
+        }
+        else if (event->key() == Qt::Key_U)
+        {
+            if (event->modifiers() & Qt::ControlModifier)
+            {
+                m_currentWorkspace->getMScrollArea()->verticalScrollBar()->setValue(m_currentWorkspace->getMScrollArea()->verticalScrollBar()->value() - 500);
+            }
+        }
+        else if (event->key() == Qt::Key_D)
+        {
+            if (event->modifiers() & Qt::ControlModifier)
+            {
+                m_currentWorkspace->getMScrollArea()->verticalScrollBar()->setValue(m_currentWorkspace->getMScrollArea()->verticalScrollBar()->value() + 500);
+            }
+        }
+        else if (event->key() == Qt::Key_H)
+        {
+            handleHistoryButtonClicked();
+        }
+
+        else if (event->key() == Qt::Key_K)
+        {
+            if (event->modifiers() & Qt::ShiftModifier)
+            {
+                m_tabWidget->handleMoveRight();
+            }
+            else
+            {
+                m_currentWorkspace->getMScrollArea()->verticalScrollBar()->setValue(m_currentWorkspace->getMScrollArea()->verticalScrollBar()->value() - 200);
+            }
+        }
+        else if (event->key() == Qt::Key_J)
+        {
+            if (event->modifiers() & Qt::ShiftModifier)
+            {
+                m_tabWidget->handleMoveLeft();
+            }
+            else
+            {
+                m_currentWorkspace->getMScrollArea()->verticalScrollBar()->setValue(m_currentWorkspace->getMScrollArea()->verticalScrollBar()->value() + 200);
+            }
+        }
+        else if (event->key() == Qt::Key_X)
+        {
+            m_tabWidget->handleCloseTab(m_tabWidget->currentIndex());
+        }
+        else if (event->key() == Qt::Key_T)
+        {
+            m_tabWidget->newTab();
+        }
+        else if (event->key() == Qt::Key_0)
+        {
+            m_currentWorkspace->handleContextClearedButtonClicked();
         }
         else
         {
@@ -294,7 +352,15 @@ namespace Ui
 
     void MainWindow::handleHistoryButtonClicked()
     {
-        m_historyHolder->isHidden() ? m_historyHolder->show() : m_historyHolder->hide();
+        if (m_historyHolder->isHidden())
+        {
+            m_historyHolder->show();
+//            m_historyList->setFocus();
+        }
+        else
+        {
+            m_historyHolder->hide();
+        }
     }
 
 } // Ui

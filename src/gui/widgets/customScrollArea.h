@@ -4,6 +4,8 @@
 #include <QScrollArea>
 #include <QVBoxLayout>
 #include <QTextDocument>
+#include <QPointer>
+#include "HistoryList.h"
 #include "textboxes/customTextEdit.h"
 
 class customScrollArea : public QScrollArea
@@ -16,6 +18,9 @@ public:
     void addCustomWidget(customTextEdit* widget);
     void updateScrollPosition();
     int textBoxCount = 0;
+    bool hasChanged = false;
+    bool isHistoric = false;
+    QPointer<HistoryButton> hButton;
 
 public Q_SLOTS:
 

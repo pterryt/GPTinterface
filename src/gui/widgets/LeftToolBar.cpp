@@ -1,11 +1,12 @@
 #include "LeftToolBar.h"
 #include "../../utils/GlobalMediator.h"
 #include <QShortcut>
+#include <QCoreApplication>
 
 LeftToolBar::LeftToolBar(QWidget *parent)
         : QWidget(parent)
 {
-    QIcon icon = QIcon("../icon/history.png");
+    QIcon icon = QIcon(QCoreApplication::applicationDirPath() + "/../icon/history.png");
 
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     m_layout = new QVBoxLayout(this);

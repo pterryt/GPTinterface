@@ -58,6 +58,7 @@ add_executable(GPTinterface
         )
 
 
+set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "gpt")
 target_link_libraries(GPTinterface
         Qt::Core
         Qt::Gui

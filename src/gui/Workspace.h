@@ -49,13 +49,15 @@ public:
     /**
     * Builds a conversation from file.
     */
-    void rebuildHistoricConversation(QString& file);
+    void rebuildHistoricConversation(QPointer<HistoryButton> &button);
 
     const QString &getName() const;
 
     void setName(const QString &name);
 
     int getNumber() const;
+
+    const QPointer<customScrollArea> &getMScrollArea() const;
 
 public Q_SLOTS:
 
@@ -106,6 +108,8 @@ private:
     int m_ContextCount = 0;
     /* Pointer to the customScrollArea. */
     QPointer<customScrollArea> m_scrollArea;
+
+private:
     /* Pointer to the inputBox. */
     QPointer<InputBox> m_inputBox;
     /* Pointer to a generic spacer. */

@@ -77,6 +77,16 @@ LeftToolBar *GlobalMediator::getLeftToolBar()
     return m_leftToolBar;
 }
 
+void GlobalMediator::handleApplicationShuttingDown()
+{
+    m_shuttingDown = true;
+}
+
+bool GlobalMediator::isMShuttingDown() const
+{
+    return m_shuttingDown;
+}
+
 //GlobalMediator *GlobalMediator::setMediaPlayer(MediaQueue *mp)
 //{
 //    m_mediaPlayer = mp;

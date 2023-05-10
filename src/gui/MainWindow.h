@@ -80,6 +80,8 @@ namespace Ui
         LeftToolBar *m_leftToolBar;
         /* Pointer to the history panel holder widget. */
         QWidget *m_historyHolder;
+        /* Pointer to the history list. */
+        HistoryList *m_historyList;
         /* Fixed-width for both side bars. Based on a percentage of the
          * screen size. */
         int m_sideWidgetWidth;

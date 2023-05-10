@@ -65,7 +65,19 @@ public Q_SLOTS:
     /**
     * Reloads a workspace from history in a new tab.
     */
-    void handleHistoryButtonClicked(QString &file);
+    void handleHistoryButtonClicked(QPointer<HistoryButton> &button);
+    /**
+    * Handles the closing of tabs.
+    */
+    void handleCloseTab(int index);
+    /**
+    * Handles tab movement leftward.
+    */
+    void handleMoveLeft();
+    /**
+    * Handles tab movement rightward.
+    */
+    void handleMoveRight();
 
 private:
 
@@ -77,7 +89,6 @@ private:
 
     /* Keeps track of the workspace count for filing. */
     int m_wsCount = 0;
-
 
     void initialize();
 

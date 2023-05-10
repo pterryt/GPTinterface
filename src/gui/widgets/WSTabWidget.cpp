@@ -18,21 +18,15 @@ WSTabWidget::WSTabWidget(QWidget *parent)
             tabBar(), &QTabBar::tabBarDoubleClicked, this, &WSTabWidget::handleTabDoubleClicked);
 
     connect(
-            this, &WSTabWidget::currentChanged, this, &WSTabWidget::handleTabChanged
-    );
+            this, &WSTabWidget::currentChanged, this, &WSTabWidget::handleTabChanged);
+
     connect(
-            m_renameLineEdit, &RenameLineEdit::sendEnterPressed, this, &WSTabWidget::handleRename
-    );
-    connect(this, &QTabWidget::tabCloseRequested,
-            this, [&](int index)
-                {
-                    widget(index)->deleteLater();
-                }
-            );
+            m_renameLineEdit, &RenameLineEdit::sendEnterPressed, this, &WSTabWidget::handleRename);
+    connect(
+            this, &QTabWidget::tabCloseRequested, this, &WSTabWidget::handleCloseTab);
     connect(
             GlobalMediator::instance(), &GlobalMediator::sendHistoryButtonClicked,
             this, &WSTabWidget::handleHistoryButtonClicked);
-
 
 }
 
@@ -48,8 +42,8 @@ void WSTabWidget::initialize()
 
 void WSTabWidget::initStyle()
 {
-    QFont font = QFont("JetBrains Mono");
-    font.setPointSize(10);
+    QFont font = QFont("Arial");
+    font.setPointSize(13);
     tabBar()->setFont(font);
 }
 
@@ -70,6 +64,7 @@ void WSTabWidget::handleTabChanged(int index)
     m_currentWorkspace = qobject_cast<Workspace *>
             (this->currentWidget());
 
+
     if (m_currentWorkspace)
     {
         Q_EMIT sendCurrentWorkspaceChanged();
@@ -87,9 +82,15 @@ void WSTabWidget::newTab()
         auto *x = new Workspace(m_wsCount, this);
         m_wsCount++;
         m_currentWorkspace = x;
-        addTab(x, QString::number(count()));
+        addTab(x, "New Empty Tab");
         tabBar->moveTab((count() - 1), (count() - 2));
         setCurrentIndex(count() - 2);
+
+        connect(
+                m_currentWorkspace, &Workspace::sendNameSet, this, [this](const QString &name) {
+                    setTabText(currentIndex(), name);
+                }
+        );
     }
 }
 
@@ -136,8 +137,51 @@ void WSTabWidget::handleRename()
     qobject_cast<Workspace *>(widget(m_lastIndexEdit))->setName(m_renameLineEdit->text());
 }
 
-void WSTabWidget::handleHistoryButtonClicked(QString &file)
+void WSTabWidget::handleHistoryButtonClicked(QPointer<HistoryButton> &button)
 {
     newTab();
-    m_currentWorkspace->rebuildHistoricConversation(file);
+    m_currentWorkspace->rebuildHistoricConversation(button);
+}
+
+void WSTabWidget::handleCloseTab(int index)
+{
+    qDebug() << "current index at the start of handleCloseTab: " << currentIndex();
+    bool isCurrent = currentIndex() == index;
+    if (count() == 2)
+    {
+        newTab();
+    }
+    delete widget(index);
+    if (isCurrent)
+    {
+        qDebug() << "Was current";
+        qDebug() << "count - 2: " << count()-2;
+        setCurrentIndex(count() - 2);
+    }
+    qDebug() << "current index at the END: " << currentIndex();
+}
+
+void WSTabWidget::handleMoveLeft()
+{
+    qDebug() << "CI" << currentIndex();
+    if (currentIndex() == 0)
+    {
+        setCurrentIndex(count() - 2);
+        return;
+    }
+    setCurrentIndex(currentIndex() - 1);
+    qDebug() << "NIndex" << currentIndex();
+
+}
+
+void WSTabWidget::handleMoveRight()
+{
+    qDebug() << "CI" << currentIndex();
+    if (currentIndex() == count() - 2)
+    {
+        setCurrentIndex(0);
+        return;
+    }
+    setCurrentIndex(currentIndex() + 1);
+    qDebug() << "NIndex" << currentIndex();
 }

@@ -1,6 +1,7 @@
 #include "RightToolBar.h"
 #include <QShortcut>
 #include <QAction>
+#include <QCoreApplication>
 
 /**
 * Holds Send button, mic button, and prefixes button.
@@ -10,10 +11,10 @@ RightToolBar::RightToolBar(QWidget *parent)
 {
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
 
-    QIcon sendIcon = QIcon("../icon/send-message.png");
-    QIcon micIcon = QIcon("../icon/microphone.png");
-    QIcon settingsIcon = QIcon("../icon/menu.png");
-    QIcon clearContextIcon = QIcon("../icon/trash.png");
+    QIcon sendIcon = QIcon(QCoreApplication::applicationDirPath() + "/../icon/send-message.png");
+    QIcon micIcon = QIcon(QCoreApplication::applicationDirPath() + "/../icon/microphone.png");
+    QIcon settingsIcon = QIcon(QCoreApplication::applicationDirPath() + "/../icon/menu.png");
+    QIcon clearContextIcon = QIcon(QCoreApplication::applicationDirPath() + "/../icon/trash.png");
 
     m_layout = new QVBoxLayout(this);
 
