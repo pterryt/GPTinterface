@@ -145,7 +145,6 @@ void WSTabWidget::handleHistoryButtonClicked(QPointer<HistoryButton> &button)
 
 void WSTabWidget::handleCloseTab(int index)
 {
-    qDebug() << "current index at the start of handleCloseTab: " << currentIndex();
     bool isCurrent = currentIndex() == index;
     if (count() == 2)
     {
@@ -154,11 +153,8 @@ void WSTabWidget::handleCloseTab(int index)
     delete widget(index);
     if (isCurrent)
     {
-        qDebug() << "Was current";
-        qDebug() << "count - 2: " << count()-2;
         setCurrentIndex(count() - 2);
     }
-    qDebug() << "current index at the END: " << currentIndex();
 }
 
 void WSTabWidget::handleMoveLeft()

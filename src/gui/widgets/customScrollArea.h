@@ -34,6 +34,7 @@ private:
     QVector<QPair<customTextEdit::bType, customTextEdit*>> textEditList;
     void saveConversation();
     QString wsName = "";
+    void deleteConversation();
 
 protected:
 

@@ -12,6 +12,7 @@
 #include <QFutureWatcher>
 
 #include "../utils/MediaQueue.h"
+#include "widgets/static_context/scScrollArea.h"
 #include "widgets/textboxes/customTextEdit.h"
 #include "widgets/customScrollArea.h"
 #include "widgets/InputBox.h"
@@ -58,6 +59,8 @@ public:
     int getNumber() const;
 
     const QPointer<customScrollArea> &getMScrollArea() const;
+
+    QHash<QUuid, int> *scSettings;
 
 public Q_SLOTS:
 

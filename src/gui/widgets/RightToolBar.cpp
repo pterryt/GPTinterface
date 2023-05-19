@@ -2,6 +2,7 @@
 #include <QShortcut>
 #include <QAction>
 #include <QCoreApplication>
+#include "../../utils/GlobalMediator.h"
 
 /**
 * Holds Send button, mic button, and prefixes button.
@@ -53,6 +54,9 @@ RightToolBar::RightToolBar(QWidget *parent)
     connect(
             m_clearContextButton, &QPushButton::clicked,
             this, &RightToolBar::handleClearContextButtonClicked);
+    connect(
+            m_optionsButton, &QPushButton::clicked,
+            this, &RightToolBar::handleStaticContextMenuClicked);
 }
 
 /**
@@ -85,4 +89,9 @@ void RightToolBar::handleSendButtonClicked()
 void RightToolBar::handleClearContextButtonClicked()
 {
     Q_EMIT clearContextButtonClick();
+}
+
+void RightToolBar::handleStaticContextMenuClicked()
+{
+    GlobalMediator::instance()->sendStaticContextMenuButtonClicked();
 }

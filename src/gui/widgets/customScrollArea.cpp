@@ -100,7 +100,7 @@ void customScrollArea::saveConversation()
        QString filename =  time + "_" + wsName + ".json";
        filename = saveLoc + filename;
        QFile Jsonfile(filename);
-       if (Jsonfile.open(QIODevice::WriteOnly))
+      if (Jsonfile.open(QIODevice::WriteOnly))
        {
            if (Jsonfile.write(doc.toJson()) != -1)
            {
@@ -115,12 +115,19 @@ void customScrollArea::saveConversation()
     }
     if (isHistoric && saveSuccess)
     {
-        QFile hFile = QFile(hButton->getMFile());
-        if (hFile.exists()){
-            hFile.remove();
-        }
+        deleteConversation();
+    }
+}
+
+void customScrollArea::deleteConversation()
+{
+    QFile hFile = QFile(hButton->getMFile());
+    if (hFile.exists()){
+        hFile.remove();
+    }
+    if (!hButton.isNull())
+    {
         hButton->deleteLater();
-        hButton = nullptr;
     }
 }
 

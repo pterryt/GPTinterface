@@ -36,6 +36,7 @@ private Q_SLOTS:
 
     void handleSendButtonClicked();
     void handleClearContextButtonClicked();
+    void handleStaticContextMenuClicked();
 
 protected:
     void resizeEvent(QResizeEvent *event) override;

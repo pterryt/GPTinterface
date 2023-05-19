@@ -13,7 +13,8 @@
 #include "widgets/BottomToolBar.h"
 #include "../devtools/logger.h"
 #include "widgets/HistoryList.h"
-
+#include "widgets/static_context/scScrollArea.h"
+#include "widgets/static_context/scBottomBar.h"
 
 namespace Ui
 {
@@ -64,10 +65,14 @@ namespace Ui
         /* RIGHT */
         iniRightBar();
 
+        /* STATIC CONTEXT MENU */
+        iniStaticContextMenu();
+
         /* FINALIZE */
 
         setCentralWidget(m_verticalWidget);
         iniTheme();
+//        m_staticContextMenu->hide();
 
         registerCurrentWorkspace(); // (4/20/23) TODO: should be automatic..
         /* CONNNECTIONS */
@@ -97,6 +102,16 @@ namespace Ui
 
         connect(
                 this, &MainWindow::destroyed, this, []() { QApplication::quit(); }
+        );
+        connect(
+                GlobalMediator::instance(), &GlobalMediator::sendStaticContextMenuButtonClicked,
+                this, &MainWindow::toggleStaticContextMenu
+                );
+        connect(
+                GlobalMediator::instance(), &GlobalMediator::sendSCToggled, this, &MainWindow::handleSCToggled
+                );
+        connect(
+                GlobalMediator::instance(), &GlobalMediator::sendSCComboBoxChanged, this, &MainWindow::handleSCComboBoxChanged
         );
     }
 
@@ -197,6 +212,7 @@ namespace Ui
         {
             rightContent->setFixedHeight(newHeight);
             leftContent->setFixedHeight(newHeight);
+            m_historyHolder->setFixedHeight(newHeight);
         }
     }
 
@@ -328,6 +344,7 @@ namespace Ui
     {
         QMainWindow::resizeEvent(event);
         setSidebarHeight();
+        centerStaticContextMenu();
     }
 
 
@@ -361,6 +378,59 @@ namespace Ui
         {
             m_historyHolder->hide();
         }
+    }
+
+    void MainWindow::iniStaticContextMenu()
+    {
+        m_staticContextMenu = new QWidget(this);
+        m_staticContextMenu->hide();
+        m_staticContextMenu->setContentsMargins(0,0,0,0);
+
+        m_staticContextMenu->setFixedWidth(1000);
+        m_staticContextMenu->setFixedHeight(500);
+
+        auto* layout = new QVBoxLayout(m_staticContextMenu);
+        layout->setContentsMargins(0,0,0,0);
+        layout->setSpacing(0);
+        m_scScroll = new scScrollArea(m_staticContextMenu);
+        auto* scBar = new scBottomBar(m_staticContextMenu);
+        scBar->setStyleSheet("background:#252525;");
+        m_staticContextMenu->setStyleSheet("background:#535353;");
+        layout->addWidget(m_scScroll);
+        layout->addWidget(scBar);
+        m_staticContextMenu->setLayout(layout);
+    }
+
+    void MainWindow::toggleStaticContextMenu()
+    {
+        m_staticContextMenu->isHidden() ? m_staticContextMenu->show() : m_staticContextMenu->hide();
+    }
+
+    void MainWindow::centerStaticContextMenu()
+    {
+        // (5/18/23) TODO: hardcoded values, figure out dynamic center screen
+        QRect sGeo = m_screen->geometry();
+        int x = (sGeo.width() - m_staticContextMenu->width() - 160);
+        int y = (sGeo.height() - m_staticContextMenu->height() - 125);
+        m_staticContextMenu->move(x, y);
+
+    }
+
+    void MainWindow::handleSCToggled(QUuid uid, int enabled)
+    {
+        if(enabled == 2)
+        {
+            m_currentWorkspace->scSettings->insert(uid, 0);
+        }
+        else
+        {
+            m_currentWorkspace->scSettings->remove(uid);
+        }
+    }
+
+    void MainWindow::handleSCComboBoxChanged(QUuid uid, int index)
+    {
+        m_currentWorkspace->scSettings->insert(uid, index);
     }
 
 } // Ui

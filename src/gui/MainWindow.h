@@ -44,6 +44,8 @@ namespace Ui
         void unregisterCurrentWorkspace();
         /* Register the new Workspace when switching to a new tab. */
         void registerCurrentWorkspace();
+        /* Show/hide the static context menu. */
+        void toggleStaticContextMenu();
 
     protected:
 
@@ -82,6 +84,10 @@ namespace Ui
         QWidget *m_historyHolder;
         /* Pointer to the history list. */
         HistoryList *m_historyList;
+        /* Pointer to the static context menu. */
+        QWidget *m_staticContextMenu;
+        /* Pointer to the static context scroll area. */
+        scScrollArea *m_scScroll;
         /* Fixed-width for both side bars. Based on a percentage of the
          * screen size. */
         int m_sideWidgetWidth;
@@ -94,6 +100,8 @@ namespace Ui
         void iniRightBar();
         /* Creates parent widget, assign the left bar, and add styling. */
         void iniLeftBar();
+        /* Creates the parent widget, assign the scScrollArea and scBottomBar. */
+        void iniStaticContextMenu();
 
         /* Initialize dark style. */
         void iniTheme();
@@ -101,6 +109,11 @@ namespace Ui
         /* Sets the left and right toolbars to match the height of the
          * tabwidget workspace by subtracting the tabbar height. */
         void setSidebarHeight();
+        /**
+        * Means of centering the static context menu which is not within a layout but a widget unto
+         * itself. Called during mainwindow resize event.
+        */
+        void centerStaticContextMenu();
 
         void cleanUpFolders(const QString& path);
 
@@ -109,6 +122,11 @@ namespace Ui
         void on_actionExit_triggered();
 
         void handleHistoryButtonClicked();
+
+        void handleSCToggled(QUuid uid, int enabled);
+
+        void handleSCComboBoxChanged(QUuid uid, int index);
+
 
     };
 } // Ui

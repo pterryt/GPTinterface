@@ -7,7 +7,17 @@ HistoryList::HistoryList(QWidget *parent)
     m_historyDirectory = QDir(QCoreApplication::applicationDirPath() + "/saved_chats/");
     m_vLayout = new QVBoxLayout(this);
     setLayout(m_vLayout);
-    m_vLayout->setSpacing(0);
+    m_vLayout->setSpacing(5);
+
+    m_font = QFont("Arial");
+    m_font.setPointSize(14);
+    auto labelFont = QFont("Comic Sans MS");
+    labelFont.setPointSize(25);
+
+    auto *hLabel = new QLabel("History", this);
+    hLabel->setFont(labelFont);
+    hLabel->setMargin(8);
+    m_vLayout->addWidget(hLabel);
     loadHistory();
     m_vLayout->addStretch();
 
@@ -39,7 +49,8 @@ void HistoryList::createButtonFromFile(QFileInfo &info)
     buttonName = buttonName.left(index);
     hb->setMName(buttonName);
     hb->setMFile(info.filePath());
-    m_vLayout->insertWidget(0, hb);
+    hb->getMLabel()->setFont(m_font);
+    m_vLayout->insertWidget(1, hb);
 }
 
 void HistoryList::handleNewHistoryItemCreated(QString &file)

@@ -55,6 +55,10 @@ add_executable(GPTinterface
         src/utils/MediaQueue.cpp
         src/utils/PollyUtility.cpp
         src/gui/widgets/HistoryList.cpp
+        src/gui/widgets/history/HistoryButtonMenu.cpp
+        src/gui/widgets/static_context/scBottomBar.cpp
+        src/gui/widgets/static_context/scScrollArea.cpp
+        src/gui/widgets/static_context/scItem.cpp
         )
 
 

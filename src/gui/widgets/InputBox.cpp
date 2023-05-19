@@ -1,5 +1,9 @@
 #include "InputBox.h"
 #include <QKeyEvent>
+#include <QGuiApplication>
+#include <QInputMethod>
+#include <QInputMethodQueryEvent>
+#include <QInputMethodEvent>
 
 InputBox::InputBox(QWidget *parent)
         : QTextEdit(parent)
@@ -11,8 +15,8 @@ InputBox::InputBox(QWidget *parent)
     setWordWrapMode(QTextOption::WrapAnywhere);
 
     /* Setup font. */
-    QFont font = QFont("JetBrains Mono");
-    font.setPointSize(12);
+    QFont font = QFont("Arial");
+    font.setPointSize(15);
     setFont(font);
 
     connect(this, &QTextEdit::textChanged, this, &InputBox::adjustHeight);
@@ -58,6 +62,7 @@ void InputBox::adjustHeight()
 
 
 void InputBox::keyPressEvent(QKeyEvent *e) {
+
     if (e->key() == Qt::Key_Return)
     {
         if (e->modifiers() & Qt::ShiftModifier)
@@ -69,6 +74,12 @@ void InputBox::keyPressEvent(QKeyEvent *e) {
             QTextEdit::keyPressEvent(e);
         }
     }
+//    else if (e->key() == Qt::Key_unknown)
+//    {
+//        QInputMethodEvent ime;
+//        ime.setCommitString(e->text());
+//        QGuiApplication::sendEvent(QGuiApplication::inputMethod(), &ime);
+//    }
     else if (e->key() == Qt::Key_Escape)
     {
         clearFocus();

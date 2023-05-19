@@ -41,6 +41,11 @@ public:
     void sendInputTokenCount(int count);
     void sendHistoryButtonClicked(QPointer<HistoryButton> &button);
     void sendNewHistoryItem(QString& file);
+    void sendNewStaticContextButtonClicked();
+    void sendStaticContextMenuButtonClicked();
+    void sendSCToggled(QUuid id, int enabled);
+    void sendSCComboBoxChanged(QUuid id, int index);
+    void sendItemDeleteRequested(QUuid id);
 
 public Q_SLOTS:
     void handleApplicationShuttingDown();

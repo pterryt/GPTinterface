@@ -19,6 +19,7 @@
 
 Workspace::Workspace(const int number, QWidget *parent) : QWidget(parent), Number(number)
 {
+    scSettings = new QHash<QUuid, int>();
     /* Needed for calculating tokens from the InputBox on the fly. */
     requestHandler = new RequestHandler(this);
 
@@ -75,6 +76,7 @@ Workspace::Workspace(const int number, QWidget *parent) : QWidget(parent), Numbe
 
 Workspace::~Workspace()
 {
+    delete scSettings;
 }
 
 void Workspace::onNewDataReceived(const QString &data)
@@ -248,6 +250,7 @@ void Workspace::handleContextClearedButtonClicked()
 
 void Workspace::rebuildHistoricConversation(QPointer<HistoryButton> &button)
 {
+    hide();
     QFile hFile = QFile(button->getMFile());
     hFile.open(QIODevice::ReadOnly | QIODevice::Text);
     QJsonDocument jDoc = QJsonDocument::fromJson(hFile.readAll());
@@ -279,7 +282,7 @@ void Workspace::rebuildHistoricConversation(QPointer<HistoryButton> &button)
         m_scrollArea->isHistoric = true;
         m_scrollArea->hButton = button;
     }
-
+    show();
 }
 
 const QPointer<customScrollArea> &Workspace::getMScrollArea() const
