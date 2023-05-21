@@ -159,25 +159,21 @@ void WSTabWidget::handleCloseTab(int index)
 
 void WSTabWidget::handleMoveLeft()
 {
-    qDebug() << "CI" << currentIndex();
     if (currentIndex() == 0)
     {
         setCurrentIndex(count() - 2);
         return;
     }
     setCurrentIndex(currentIndex() - 1);
-    qDebug() << "NIndex" << currentIndex();
 
 }
 
 void WSTabWidget::handleMoveRight()
 {
-    qDebug() << "CI" << currentIndex();
     if (currentIndex() == count() - 2)
     {
         setCurrentIndex(0);
         return;
     }
     setCurrentIndex(currentIndex() + 1);
-    qDebug() << "NIndex" << currentIndex();
 }

@@ -9,7 +9,12 @@
 RequestHandler::RequestHandler(QObject *parent) :
         QObject(parent), networkManager(new QNetworkAccessManager(this))
 {
-//        m_encoder = new TikTokenEncoder(this);
+    scSettings = new QHash<QUuid, int>();
+}
+
+RequestHandler::~RequestHandler()
+{
+    delete scSettings;
 }
 
 void RequestHandler::addMessage(
@@ -42,7 +47,7 @@ void RequestHandler::startStreaming(int tokens, const QString &input)
     // Create a JSON object for the request body
     QJsonObject requestBody;
     requestBody["model"] = "gpt-3.5-turbo";
-    requestBody["messages"] = m_messages;
+    requestBody["messages"] = scSettings->isEmpty() ? m_messages : addStaticContexts(m_messages);
     requestBody["max_tokens"] = limit;
     requestBody["temperature"] = 0;
     requestBody["stream"] = true;
@@ -110,13 +115,7 @@ void RequestHandler::onFinished()
     QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
     if (reply)
     {
-//        qDebug() << "Request finished";
-        auto start = std::chrono::high_resolution_clock::now();
         int tokens = TikTokenEncoder::encode(m_fullResponse.toStdString());
-        auto end = std::chrono::high_resolution_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::microseconds>
-                (end - start);
-//        qDebug() << "Tiktoken time required: " << duration.count();
         addMessage(tokens, "assistant", m_fullResponse);
         m_fullResponse = "";
         Q_EMIT responseFinshed();
@@ -133,6 +132,7 @@ int RequestHandler::calcResponseLimit()
         contextContainer.currentContext.pop_front();
         Q_EMIT sendContextTokensCalculated(contextContainer.size);
     }
+    giLog::consoleLog->info("Calculated Response Limit: {}", limit);
     return limit;
 }
 
@@ -145,5 +145,31 @@ void RequestHandler::clearContext()
         m_messages.removeAt(0);
     }
     Q_EMIT sendContextTokensCalculated(0);
+}
+
+QJsonArray RequestHandler::addStaticContexts(QJsonArray array)
+{
+    // (5/20/23) TODO: unnecessary container
+    for (auto &sc : scSettings->keys())
+    {
+        QJsonObject newobj;
+        newobj["role"] = "user";
+        int index = scSettings->value(sc);
+        switch (index)
+        {
+            case 0:
+                newobj["content"] = GlobalMediator::instance()->getScScrollArea()->getscUOMap()->value(sc)->getText();
+                array.push_front(newobj);
+                break;
+            case 1:
+                newobj["content"] = GlobalMediator::instance()->getScScrollArea()->getscUOMap()->value(sc)->getText();
+                array.push_back(newobj);
+                break;
+            default:
+                break;
+        }
+    }
+
+    return array;
 }
 

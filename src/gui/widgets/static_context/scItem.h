@@ -13,26 +13,32 @@ class scItem : public QWidget {
 Q_OBJECT
 
 public:
+
     explicit scItem(QWidget *parent = nullptr, const QString& id = QString());
-    const QUuid &getMId() const;
-    void setEditted();
+
+    [[nodiscard]] const QUuid &getMId() const;
     QString getText();
     void setText(const QString& text);
+    void setCombo(int index);
+    void setEnabled();
+    void setDisabled();
+    void setTextLocked();
+    void setTextUnlocked();
 
 public Q_SLOTS:
-    void toggleCanEdit();
+
     void handleSCToggled(int enabled);
     void handleSCComboBoxChanged(int index);
-    void handleTextChanged();
     void handleDeleteButtonClicked();
+    void handleEditButtonClicked();
+    void handleUpButtonPressed();
+    void handleDownButtonPressed();
 
 Q_SIGNALS:
 
 protected:
 
 private:
-    bool editted = false;
-    bool canEdit = false;
     QUuid m_id;
     QHBoxLayout *m_layout;
     QCheckBox *m_checkBox;

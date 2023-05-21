@@ -87,6 +87,17 @@ bool GlobalMediator::isMShuttingDown() const
     return m_shuttingDown;
 }
 
+GlobalMediator *GlobalMediator::setScScrollArea(scScrollArea *scsa)
+{
+    m_scScrollArea = scsa;
+    return m_mediator;
+}
+
+scScrollArea *GlobalMediator::getScScrollArea()
+{
+    return m_scScrollArea;
+}
+
 //GlobalMediator *GlobalMediator::setMediaPlayer(MediaQueue *mp)
 //{
 //    m_mediaPlayer = mp;

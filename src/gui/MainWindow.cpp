@@ -95,7 +95,6 @@ namespace Ui
         connect(
                 m_tabWidget, &WSTabWidget::sendCurrentWorkspaceChanged, this,
                 &MainWindow::registerCurrentWorkspace);
-
         connect(
                 m_leftToolBar, &LeftToolBar::sendHistoryButtonClicked,
                 this, &MainWindow::handleHistoryButtonClicked);
@@ -251,7 +250,10 @@ namespace Ui
         {
             handleHistoryButtonClicked();
         }
-
+        else if (event->key() == Qt::Key_C)
+        {
+            toggleStaticContextMenu();
+        }
         else if (event->key() == Qt::Key_K)
         {
             if (event->modifiers() & Qt::ShiftModifier)
@@ -306,6 +308,7 @@ namespace Ui
                 m_bottomToolBar,
                 &BottomToolBar::setContextTokens
         );
+        m_scScroll->loadStaticContexts(m_currentWorkspace->getRequestHandler()->scSettings);
     }
 
     void MainWindow::unregisterCurrentWorkspace()
@@ -403,7 +406,19 @@ namespace Ui
 
     void MainWindow::toggleStaticContextMenu()
     {
-        m_staticContextMenu->isHidden() ? m_staticContextMenu->show() : m_staticContextMenu->hide();
+        if (m_staticContextMenu->isHidden())
+        {
+            m_staticContextMenu->show();
+        }
+        else
+        {
+            m_staticContextMenu->hide();
+            QHash<QUuid, scItem*>::iterator it;
+            for (it = m_scScroll->getscUOMap()->begin(); it != m_scScroll->getscUOMap()->end(); ++it)
+            {
+                it.value()->setTextLocked();
+            }
+        }
     }
 
     void MainWindow::centerStaticContextMenu()
@@ -420,17 +435,17 @@ namespace Ui
     {
         if(enabled == 2)
         {
-            m_currentWorkspace->scSettings->insert(uid, 0);
+            m_currentWorkspace->getRequestHandler()->scSettings->insert(uid, 0);
         }
         else
         {
-            m_currentWorkspace->scSettings->remove(uid);
+            m_currentWorkspace->getRequestHandler()->scSettings->remove(uid);
         }
     }
 
     void MainWindow::handleSCComboBoxChanged(QUuid uid, int index)
     {
-        m_currentWorkspace->scSettings->insert(uid, index);
+        m_currentWorkspace->getRequestHandler()->scSettings->insert(uid, index);
     }
 
 } // Ui

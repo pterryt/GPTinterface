@@ -31,16 +31,15 @@ scItem::scItem(QWidget *parent, const QString& id)
     m_checkBox->setStyleSheet("QCheckBox {background-color:#252525;padding:0px;spacing:0px;} QCheckBox::indicator {width: 20px; height: 20px;}");
 
     m_textEdit = new QPlainTextEdit(this);
-    m_textEdit->setStyleSheet("background:#252525;");
+    m_textEdit->setStyleSheet("QPlainTextEdit {background:#252525;}");
     m_textEdit->setFont(font);
+    m_textEdit->setReadOnly(true);
 
     m_comboBox = new QComboBox(this);
     m_comboBox->setFixedSize(100,35);
     m_comboBox->setStyleSheet("background:#252525;");
-    m_comboBox->addItem("Prefix");
-    m_comboBox->addItem("Prefix-All");
-    m_comboBox->addItem("Suffix");
-    m_comboBox->addItem("Suffix-All");
+    m_comboBox->addItem("Keep in Context");
+    m_comboBox->addItem("Prefix-Each");
     m_comboBox->setFont(font);
 
     m_editButton = new QPushButton(this);
@@ -74,16 +73,12 @@ scItem::scItem(QWidget *parent, const QString& id)
     m_layout->addWidget(arrowBox);
     m_layout->addWidget(m_deleteButton, 0, Qt::AlignTop);
 
-    connect(m_editButton, &QPushButton::pressed, this, &scItem::toggleCanEdit);
     connect(m_checkBox, &QCheckBox::stateChanged, this, &scItem::handleSCToggled);
     connect(m_comboBox, &QComboBox::currentIndexChanged, this, &scItem::handleSCComboBoxChanged);
-    connect(m_textEdit, &QPlainTextEdit::textChanged, this, &scItem::handleTextChanged);
     connect(m_deleteButton, &QPushButton::pressed, this, &scItem::handleDeleteButtonClicked);
-}
-
-void scItem::toggleCanEdit()
-{
-    canEdit = !canEdit;
+    connect(m_editButton, &QPushButton::pressed, this, &scItem::handleEditButtonClicked);
+    connect(m_moveUpButton, &QPushButton::pressed, this, &scItem::handleUpButtonPressed);
+    connect(m_moveDownButton, &QPushButton::pressed, this, &scItem::handleDownButtonPressed);
 }
 
 const QUuid &scItem::getMId() const
@@ -101,16 +96,6 @@ void scItem::handleSCComboBoxChanged(int index)
     Q_EMIT GlobalMediator::instance()->sendSCComboBoxChanged(m_id, index);
 }
 
-void scItem::handleTextChanged()
-{
-    editted = true;
-}
-
-void scItem::setEditted()
-{
-    editted = true;
-}
-
 QString scItem::getText()
 {
     return m_textEdit->toPlainText();
@@ -124,5 +109,61 @@ void scItem::handleDeleteButtonClicked()
 void scItem::setText(const QString &text)
 {
     m_textEdit->setPlainText(text);
+}
+
+void scItem::setCombo(int index)
+{
+    m_comboBox->setCurrentIndex(index);
+}
+
+void scItem::setEnabled()
+{
+    m_checkBox->setCheckState(Qt::CheckState::Checked);
+}
+
+void scItem::setDisabled()
+{
+    m_comboBox->setCurrentIndex(0);
+    m_checkBox->setCheckState((Qt::CheckState::Unchecked));
+}
+
+void scItem::handleEditButtonClicked()
+{
+    if (m_textEdit->isReadOnly())
+    {
+       m_textEdit->setReadOnly(false);
+       m_textEdit->setStyleSheet("background:#252525; border:2px solid green;");
+       m_textEdit->setFocus();
+       m_textEdit->moveCursor(QTextCursor::End);
+    }
+    else
+    {
+        m_textEdit->setReadOnly(true);
+        m_textEdit->setStyleSheet("background:#252525; border:none;");
+    }
+}
+
+void scItem::setTextLocked()
+{
+    m_textEdit->setReadOnly(true);
+    m_textEdit->setStyleSheet("background:#252525; border:none;");
+}
+
+void scItem::setTextUnlocked()
+{
+    m_textEdit->setReadOnly(false);
+    m_textEdit->setStyleSheet("background:#252525; border:2px solid green;");
+}
+
+void scItem::handleUpButtonPressed()
+{
+    Q_EMIT GlobalMediator::instance()->sendScItemMoveUpButtonClicked(parentWidget()->layout()->indexOf(this));
+    qDebug() << parentWidget()->layout()->indexOf(this);
+}
+
+void scItem::handleDownButtonPressed()
+{
+    Q_EMIT GlobalMediator::instance()->sendScItemMoveDownButtonClicked(parentWidget()->layout()->indexOf(this));
+    qDebug() << parentWidget()->layout()->indexOf(this);
 }
 

@@ -12,7 +12,6 @@
 #include <QFutureWatcher>
 
 #include "../utils/MediaQueue.h"
-#include "widgets/static_context/scScrollArea.h"
 #include "widgets/textboxes/customTextEdit.h"
 #include "widgets/customScrollArea.h"
 #include "widgets/InputBox.h"
@@ -29,8 +28,6 @@ class Workspace : public QWidget
 public:
 
     explicit Workspace(int number, QWidget *parent = nullptr);
-
-    ~Workspace();
 
     /**
     * Retrieve the child InputBox.
@@ -60,7 +57,7 @@ public:
 
     const QPointer<customScrollArea> &getMScrollArea() const;
 
-    QHash<QUuid, int> *scSettings;
+    RequestHandler *getRequestHandler();
 
 public Q_SLOTS:
 
@@ -113,17 +110,11 @@ private:
     QPointer<customScrollArea> m_scrollArea;
 
 private:
-    /* Pointer to the inputBox. */
     QPointer<InputBox> m_inputBox;
-    /* Pointer to a generic spacer. */
     QPointer<QWidget> m_spacer;
-    /* Pointer to the most recently added customTextEdit. */
     QPointer<customTextEdit> m_currentTextEdit;
-    /* Pointer to the most recently added userText. */
     QPointer<customTextEdit> m_currentInput;
-    /* Pointer to this workspace's requestHandler. */
     QPointer<RequestHandler> requestHandler;
-    /* Pointer to this workspace's encoder. */
     // (4/25/23) TODO: Should probably be shared.
     QPointer<TikTokenEncoder> encoder;
     /* Class used for synthesizing speech. */

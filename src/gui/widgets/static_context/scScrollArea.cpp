@@ -13,7 +13,8 @@
 scScrollArea::scScrollArea(QWidget *parent)
         : QScrollArea(parent)
 {
-    scUOMap = new QHash<QUuid, scItem*>();
+    GlobalMediator::instance()->setScScrollArea(this);
+    scUOMap = new QHash<QUuid, scItem *>();
     auto *content = new QWidget(this);
     setWidgetResizable(true);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -28,13 +29,18 @@ scScrollArea::scScrollArea(QWidget *parent)
     connect(
             GlobalMediator::instance(), &GlobalMediator::sendNewStaticContextButtonClicked,
             this, &scScrollArea::createNewStaticContext
-            );
+    );
 
     connect(
             GlobalMediator::instance(), &GlobalMediator::sendItemDeleteRequested,
             this, &scScrollArea::handleItemDeleteRequested
+    );
+    connect(
+            GlobalMediator::instance(), &GlobalMediator::sendScItemMoveUpButtonClicked,
+            this, &scScrollArea::handleItemMoveUpButtonClicked
             );
 }
+
 scScrollArea::~scScrollArea()
 {
     saveItems();
@@ -47,7 +53,7 @@ void scScrollArea::createNewStaticContext()
     widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     auto *layout = new QHBoxLayout(widget);
     auto *item = new scItem(widget);
-    item->setEditted();
+    item->setTextUnlocked();
     scUOMap->insert(item->getMId(), item);
     layout->addWidget(item);
     widget->setObjectName("object");
@@ -59,7 +65,7 @@ void scScrollArea::saveItems()
 {
     QJsonDocument doc;
     QJsonArray arr;
-    for (auto &item : *scUOMap)
+    for (auto &item: *scUOMap)
     {
         QString iText = item->getText();
         if (iText != "")
@@ -72,7 +78,7 @@ void scScrollArea::saveItems()
     }
     doc.setArray(arr);
     QString saveLoc = QCoreApplication::applicationDirPath() + "/static_contexts/";
-    QString filename =  "saved_contexts.json";
+    QString filename = "saved_contexts.json";
     filename = saveLoc + filename;
     QFile Jsonfile(filename);
     if (Jsonfile.open(QIODevice::WriteOnly))
@@ -94,14 +100,14 @@ void scScrollArea::handleItemDeleteRequested(QUuid id)
 void scScrollArea::loadItems()
 {
     QString saveLoc = QCoreApplication::applicationDirPath() + "/static_contexts/";
-    QString filename =  "saved_contexts.json";
+    QString filename = "saved_contexts.json";
     filename = saveLoc + filename;
     QFile hFile = QFile(filename);
     hFile.open(QIODevice::ReadOnly | QIODevice::Text);
     QJsonDocument jDoc = QJsonDocument::fromJson(hFile.readAll());
     QJsonArray arr = jDoc.array();
 
-    for (auto && i : arr)
+    for (auto &&i: arr)
     {
         QJsonObject obj = i.toObject();
         rebuildStaticContext(obj["id"].toString(), obj["text"].toString());
@@ -120,6 +126,56 @@ void scScrollArea::rebuildStaticContext(const QString &id, const QString &text)
     widget->setObjectName("object");
     widget->setStyleSheet("#object {border: 1px solid black;} ");
     m_vlayout->insertWidget(0, widget);
+    widget->setLayout(layout);
+}
+
+QHash<QUuid, scItem *> *scScrollArea::getscUOMap()
+{
+    return scUOMap;
+}
+
+void scScrollArea::loadStaticContexts(QHash<QUuid, int> *workspaceSettings)
+{
+    QHash<QUuid, scItem *>::iterator i;
+    for (i = scUOMap->begin(); i != scUOMap->end(); ++i)
+    {
+        i.value()->setDisabled();
+    }
+    QHash<QUuid, int>::iterator it;
+    for (it = workspaceSettings->begin(); it != workspaceSettings->end(); ++it)
+    {
+        QUuid key = it.key();
+        int comboValue = it.value();
+        if (scUOMap->contains(key))
+        {
+            scUOMap->value(key)->setCombo(comboValue);
+            scUOMap->value(key)->setEnabled();
+        }
+        else
+        {
+            workspaceSettings->remove(key);
+        }
+    }
+}
+
+void scScrollArea::handleItemMoveDownButtonClicked(int index)
+{
+    if (index != m_vlayout->count() - 1)
+    {
+        QWidget *widget = m_vlayout->itemAt(index)->widget();
+        m_vlayout->takeAt(index);
+        m_vlayout->insertWidget(index + 1, widget);
+    }
+}
+
+void scScrollArea::handleItemMoveUpButtonClicked(int index)
+{
+    if (index != 0)
+    {
+        QWidget *widget = m_vlayout->itemAt(index)->widget();
+        m_vlayout->takeAt(index);
+        m_vlayout->insertWidget(index - 1, widget);
+    }
 }
 
 

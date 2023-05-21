@@ -1,11 +1,9 @@
 #include "Workspace.h"
 
 #include <QVBoxLayout>
-#include <QListWidget>
 #include <QtConcurrent/QtConcurrent>
 #include <QShortcut>
 #include <QTextBlock>
-#include <QAbstractTextDocumentLayout>
 #include <QScrollBar>
 
 #include "../utils/GlobalMediator.h"
@@ -19,7 +17,6 @@
 
 Workspace::Workspace(const int number, QWidget *parent) : QWidget(parent), Number(number)
 {
-    scSettings = new QHash<QUuid, int>();
     /* Needed for calculating tokens from the InputBox on the fly. */
     requestHandler = new RequestHandler(this);
 
@@ -74,10 +71,6 @@ Workspace::Workspace(const int number, QWidget *parent) : QWidget(parent), Numbe
             );
 }
 
-Workspace::~Workspace()
-{
-    delete scSettings;
-}
 
 void Workspace::onNewDataReceived(const QString &data)
 {
@@ -154,7 +147,6 @@ void Workspace::handleSendButtonClicked()
         QString inputString = m_inputBox->toPlainText();
         if (inputString == "") return;
 
-        qDebug() << Name;
         if (Name == "")
         {
             setName(inputString);
@@ -288,4 +280,9 @@ void Workspace::rebuildHistoricConversation(QPointer<HistoryButton> &button)
 const QPointer<customScrollArea> &Workspace::getMScrollArea() const
 {
     return m_scrollArea;
+}
+
+RequestHandler *Workspace::getRequestHandler()
+{
+    return requestHandler;
 }

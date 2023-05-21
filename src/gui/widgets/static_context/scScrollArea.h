@@ -16,12 +16,17 @@ public:
 
     explicit scScrollArea(QWidget *parent = nullptr);
     ~scScrollArea() override;
+    QHash<QUuid, scItem*> *getscUOMap();
+
 
 public Q_SLOTS:
 
     void createNewStaticContext();
     void rebuildStaticContext(const QString& id = QString(), const QString& text = QString());
     void handleItemDeleteRequested(QUuid id);
+    void loadStaticContexts(QHash<QUuid, int> *workspaceSettings);
+    void handleItemMoveDownButtonClicked(int index);
+    void handleItemMoveUpButtonClicked(int index);
 
 Q_SIGNALS:
 
